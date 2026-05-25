@@ -2208,7 +2208,7 @@ footer{
 
 }
 /* =========================================================
-   MOBILE FIXES FINAL
+   MOBILE FIXES REAL
 ========================================================= */
 
 @media (max-width:768px){
@@ -2219,27 +2219,20 @@ footer{
 
   /* NAVBAR */
 
-  #navbar{
-    padding:15px 0;
-  }
-
   .nav-container{
-    padding:0 15px;
-    gap:10px;
+    padding:0 20px;
   }
 
   .logo{
     gap:10px;
-    max-width:70%;
   }
 
   .logo img{
-    height:45px;
+    height:40px;
   }
 
   .logo-text h2{
     font-size:1rem;
-    line-height:1.1;
   }
 
   .logo-text span{
@@ -2250,14 +2243,10 @@ footer{
     display:none;
   }
 
-  .menu-toggle{
-    font-size:1.5rem;
-  }
-
   /* HERO */
 
   .hero{
-    padding:120px 0 60px;
+    padding:130px 0 70px;
     min-height:auto;
   }
 
@@ -2268,58 +2257,43 @@ footer{
     text-align:center;
   }
 
-  .hero-text small{
-    font-size:.7rem;
-    letter-spacing:2px;
-  }
-
   .hero-text h1{
-    font-size:3rem;
-    line-height:1;
-    letter-spacing:-2px;
-    margin-bottom:20px;
+    font-size:2.7rem;
+    line-height:1.1;
+    letter-spacing:-1px;
   }
 
   .hero-text p{
     font-size:1rem;
-    line-height:1.6;
   }
 
   .hero-buttons{
     flex-direction:column;
     gap:15px;
-    margin-bottom:40px;
   }
 
   .btn-primary,
-  .btn-secondary{
+  .btn-secondary,
+  .cta-btn{
     width:100%;
     justify-content:center;
-    padding:18px 20px;
-    font-size:1rem;
   }
 
   .hero-features{
     flex-direction:column;
+    gap:20px;
     align-items:center;
-    gap:15px;
-  }
-
-  /* HERO IMAGE */
-
-  .glass-card{
-    padding:20px;
   }
 
   .floating-card{
     display:none;
   }
 
-  /* SECTIONS */
-
-  .section{
-    padding:70px 0;
+  .glass-card{
+    padding:25px;
   }
+
+  /* TITLES */
 
   .section-title{
     padding:0 20px;
@@ -2328,7 +2302,6 @@ footer{
 
   .section-title h2{
     font-size:2.2rem;
-    line-height:1.1;
   }
 
   .section-title p{
@@ -2350,15 +2323,7 @@ footer{
   .stat-card,
   .about-card,
   .card-content{
-    padding:30px 20px;
-  }
-
-  .stat-card h2{
-    font-size:2.5rem;
-  }
-
-  .card h3{
-    font-size:1.4rem;
+    padding:30px 25px;
   }
 
   /* TABS */
@@ -2369,14 +2334,11 @@ footer{
 
   .tabs-header{
     flex-direction:column;
-    gap:15px;
   }
 
   .tab-btn{
     width:100%;
     justify-content:center;
-    font-size:1rem;
-    padding:15px 20px;
   }
 
   /* TIMELINE */
@@ -2396,7 +2358,7 @@ footer{
   .timeline-box{
     width:calc(100% - 50px);
     margin-left:50px;
-    padding:25px 20px;
+    padding:25px;
   }
 
   .timeline-box::before{
@@ -2407,19 +2369,18 @@ footer{
   /* SPEAKERS */
 
   .speaker-card img{
-    height:320px;
+    height:350px;
   }
 
   /* CTA */
 
   .cta{
+    padding:70px 25px;
     margin:0 20px;
-    padding:60px 20px;
   }
 
   .cta h2{
     font-size:2rem;
-    line-height:1.2;
   }
 
   .cta p{
@@ -2428,19 +2389,14 @@ footer{
 
   .cta-buttons{
     flex-direction:column;
-    gap:15px;
-  }
-
-  .cta-btn{
-    width:100%;
   }
 
   /* FOOTER */
 
   .footer-grid{
     grid-template-columns:1fr;
-    gap:40px;
     text-align:center;
+    gap:40px;
     padding:0 20px 60px;
   }
 
@@ -2459,11 +2415,253 @@ footer{
   /* MODAL */
 
   .modal-text{
-    padding:30px 20px;
+    padding:35px 25px;
   }
 
   .modal-name{
     font-size:2rem;
   }
 
+  /* BACK TO TOP */
+
+  .back-to-top{
+    width:55px;
+    height:55px;
+    right:20px;
+    bottom:20px;
+  }
+
+}
+
+.agenda-room-title{
+
+    margin:40px 0 25px;
+
+    font-size:2rem;
+
+    font-weight:900;
+
+    color:#00d4ff;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+
+    text-shadow:
+    0 0 10px rgba(0,212,255,.5),
+    0 0 20px rgba(0,212,255,.3);
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+}
+
+/* ========================================= */
+/* ROOM TITLES */
+/* ========================================= */
+
+/* =========================================================
+   SALAS / DIVISIONES DE AGENDA Y PONENCIAS
+========================================================= */
+
+.room-section{
+
+    margin-top: 80px;
+
+    padding: 45px;
+
+    border-radius: 32px;
+
+    background:
+    linear-gradient(
+        145deg,
+        rgba(11,90,167,.95),
+        rgba(6,43,82,.98)
+    );
+
+    box-shadow:
+    0 25px 55px rgba(11,90,167,.20);
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+/* EFECTO DECORATIVO */
+
+.room-section::before{
+
+    content:'';
+
+    position:absolute;
+
+    top:-120px;
+    right:-120px;
+
+    width:250px;
+    height:250px;
+
+    border-radius:50%;
+
+    background:rgba(32,192,216,.12);
+
+    filter:blur(10px);
+}
+
+/* TITULO */
+.room-title{
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    margin-top:60px;
+    margin-bottom:30px;
+
+    font-size:2rem;
+
+    font-weight:900;
+
+    color:#00d4ff;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+
+    text-shadow:
+    0 0 10px rgba(0,212,255,.5),
+    0 0 20px rgba(0,212,255,.3);
+}
+
+.room-title i{
+
+    color:#00d4ff;
+}
+
+.room-title i{
+
+    width:60px;
+    height:60px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:18px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #20c0d8,
+        #0b5aa7
+    );
+
+    color:white;
+
+    font-size:1.4rem;
+
+    box-shadow:
+    0 10px 25px rgba(32,192,216,.35);
+}
+
+/* SUBTEXTO OPCIONAL */
+
+.room-subtitle{
+
+    color:rgba(255,255,255,.7);
+
+    font-size:1rem;
+
+    margin-top:-20px;
+
+    margin-bottom:35px;
+}
+
+/* TIMELINE DENTRO DE SALA */
+
+.room-section .timeline{
+
+    max-width:100%;
+
+    padding:0;
+}
+
+.room-section .timeline::before{
+
+    background:rgba(255,255,255,.15);
+}
+
+/* CARDS TIMELINE */
+
+.room-section .timeline-box{
+
+    background:rgba(255,255,255,.97);
+
+    border:none;
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,.12);
+}
+
+.room-section .timeline-box h3{
+
+    color:var(--primary-dark);
+}
+
+.room-section .timeline-box p{
+
+    color:var(--text-light);
+}
+
+/* EFECTO HOVER */
+
+.room-section .timeline-box:hover{
+
+    transform:translateY(-8px);
+
+    transition:.4s ease;
+
+    box-shadow:
+    0 20px 45px rgba(0,0,0,.16);
+}
+
+/* PONENCIAS */
+
+.room-section .cards{
+
+    max-width:100%;
+
+    padding:0;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+    .room-section{
+
+        padding:30px 20px;
+
+        border-radius:24px;
+    }
+
+    .room-title{
+
+        font-size:1.4rem;
+
+        flex-wrap:wrap;
+    }
+
+    .room-title i{
+
+        width:50px;
+        height:50px;
+
+        font-size:1.1rem;
+    }
 }
