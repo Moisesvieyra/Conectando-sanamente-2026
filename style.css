@@ -2208,7 +2208,7 @@ footer{
 
 }
 /* =========================================================
-   MOBILE FIXES REAL
+   MOBILE FIXES FINAL
 ========================================================= */
 
 @media (max-width:768px){
@@ -2219,20 +2219,27 @@ footer{
 
   /* NAVBAR */
 
+  #navbar{
+    padding:15px 0;
+  }
+
   .nav-container{
-    padding:0 20px;
+    padding:0 15px;
+    gap:10px;
   }
 
   .logo{
     gap:10px;
+    max-width:70%;
   }
 
   .logo img{
-    height:40px;
+    height:45px;
   }
 
   .logo-text h2{
     font-size:1rem;
+    line-height:1.1;
   }
 
   .logo-text span{
@@ -2243,10 +2250,14 @@ footer{
     display:none;
   }
 
+  .menu-toggle{
+    font-size:1.5rem;
+  }
+
   /* HERO */
 
   .hero{
-    padding:130px 0 70px;
+    padding:120px 0 60px;
     min-height:auto;
   }
 
@@ -2257,43 +2268,58 @@ footer{
     text-align:center;
   }
 
+  .hero-text small{
+    font-size:.7rem;
+    letter-spacing:2px;
+  }
+
   .hero-text h1{
-    font-size:2.7rem;
-    line-height:1.1;
-    letter-spacing:-1px;
+    font-size:3rem;
+    line-height:1;
+    letter-spacing:-2px;
+    margin-bottom:20px;
   }
 
   .hero-text p{
     font-size:1rem;
+    line-height:1.6;
   }
 
   .hero-buttons{
     flex-direction:column;
     gap:15px;
+    margin-bottom:40px;
   }
 
   .btn-primary,
-  .btn-secondary,
-  .cta-btn{
+  .btn-secondary{
     width:100%;
     justify-content:center;
+    padding:18px 20px;
+    font-size:1rem;
   }
 
   .hero-features{
     flex-direction:column;
-    gap:20px;
     align-items:center;
+    gap:15px;
+  }
+
+  /* HERO IMAGE */
+
+  .glass-card{
+    padding:20px;
   }
 
   .floating-card{
     display:none;
   }
 
-  .glass-card{
-    padding:25px;
-  }
+  /* SECTIONS */
 
-  /* TITLES */
+  .section{
+    padding:70px 0;
+  }
 
   .section-title{
     padding:0 20px;
@@ -2302,6 +2328,7 @@ footer{
 
   .section-title h2{
     font-size:2.2rem;
+    line-height:1.1;
   }
 
   .section-title p{
@@ -2323,7 +2350,15 @@ footer{
   .stat-card,
   .about-card,
   .card-content{
-    padding:30px 25px;
+    padding:30px 20px;
+  }
+
+  .stat-card h2{
+    font-size:2.5rem;
+  }
+
+  .card h3{
+    font-size:1.4rem;
   }
 
   /* TABS */
@@ -2334,11 +2369,14 @@ footer{
 
   .tabs-header{
     flex-direction:column;
+    gap:15px;
   }
 
   .tab-btn{
     width:100%;
     justify-content:center;
+    font-size:1rem;
+    padding:15px 20px;
   }
 
   /* TIMELINE */
@@ -2358,7 +2396,7 @@ footer{
   .timeline-box{
     width:calc(100% - 50px);
     margin-left:50px;
-    padding:25px;
+    padding:25px 20px;
   }
 
   .timeline-box::before{
@@ -2369,18 +2407,19 @@ footer{
   /* SPEAKERS */
 
   .speaker-card img{
-    height:350px;
+    height:320px;
   }
 
   /* CTA */
 
   .cta{
-    padding:70px 25px;
     margin:0 20px;
+    padding:60px 20px;
   }
 
   .cta h2{
     font-size:2rem;
+    line-height:1.2;
   }
 
   .cta p{
@@ -2389,14 +2428,19 @@ footer{
 
   .cta-buttons{
     flex-direction:column;
+    gap:15px;
+  }
+
+  .cta-btn{
+    width:100%;
   }
 
   /* FOOTER */
 
   .footer-grid{
     grid-template-columns:1fr;
-    text-align:center;
     gap:40px;
+    text-align:center;
     padding:0 20px 60px;
   }
 
@@ -2415,20 +2459,11 @@ footer{
   /* MODAL */
 
   .modal-text{
-    padding:35px 25px;
+    padding:30px 20px;
   }
 
   .modal-name{
     font-size:2rem;
-  }
-
-  /* BACK TO TOP */
-
-  .back-to-top{
-    width:55px;
-    height:55px;
-    right:20px;
-    bottom:20px;
   }
 
 }
