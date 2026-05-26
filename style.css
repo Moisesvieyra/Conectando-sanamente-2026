@@ -2834,3 +2834,182 @@ footer{
         font-size:1.6rem;
     }
 }
+
+/* ========================================= */
+/* MODAL INFORMACIÓN */
+/* ========================================= */
+
+.info-modal{
+
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,.65);
+
+    backdrop-filter: blur(8px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 5000;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: .4s ease;
+}
+
+.info-modal.active{
+
+    opacity: 1;
+    visibility: visible;
+}
+
+.info-modal-content{
+
+    width: 90%;
+    max-width: 900px;
+
+    background: white;
+
+    border-radius: 35px;
+
+    overflow: hidden;
+
+    position: relative;
+
+    animation: modalPop .5s ease;
+}
+
+@keyframes modalPop{
+
+    from{
+        transform: scale(.8);
+        opacity: 0;
+    }
+
+    to{
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.close-info-modal{
+
+    position: absolute;
+
+    top: 20px;
+    right: 20px;
+
+    width: 50px;
+    height: 50px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #f1f5f9;
+
+    color: #0b5aa7;
+
+    font-size: 2rem;
+
+    cursor: pointer;
+
+    transition: .3s ease;
+
+    z-index: 10;
+}
+
+.close-info-modal:hover{
+
+    background: #0b5aa7;
+    color: white;
+
+    transform: rotate(90deg);
+}
+
+.info-modal-grid{
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    align-items: center;
+}
+
+.info-image img{
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.info-text{
+
+    padding: 60px;
+}
+
+.info-text h2{
+
+    font-size: 2.5rem;
+
+    color: #0b5aa7;
+
+    margin-bottom: 10px;
+}
+
+.info-text span{
+
+    display: block;
+
+    font-weight: 700;
+
+    color: #20c0d8;
+
+    margin-bottom: 30px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+}
+
+.info-text p{
+
+    color: #4b5563;
+
+    line-height: 1.8;
+
+    margin-bottom: 15px;
+}
+
+.info-contact{
+
+    margin-top: 30px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid rgba(0,0,0,.1);
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .info-modal-grid{
+
+        grid-template-columns: 1fr;
+    }
+
+    .info-text{
+
+        padding: 35px 25px;
+    }
+
+    .info-text h2{
+
+        font-size: 2rem;
+    }
+}
