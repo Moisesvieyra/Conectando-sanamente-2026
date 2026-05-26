@@ -463,6 +463,40 @@ document.addEventListener("DOMContentLoaded", () => {
     InteractiveCursor.init();
     UIManager.init();
 
+    /* ========================================= */
+/* MODAL INFO KEYLA */
+/* ========================================= */
+
+const infoBtn = document.querySelector('.info-btn');
+const infoModal = document.getElementById('infoModal');
+const closeInfoModal = document.getElementById('closeInfoModal');
+
+if(infoBtn){
+
+    infoBtn.addEventListener('click', () => {
+
+        infoModal.classList.add('active');
+
+    });
+}
+
+if(closeInfoModal){
+
+    closeInfoModal.addEventListener('click', () => {
+
+        infoModal.classList.remove('active');
+
+    });
+}
+
+window.addEventListener('click', (e) => {
+
+    if(e.target === infoModal){
+
+        infoModal.classList.remove('active');
+    }
+});
+
     // Evento de Scroll Top
     DOM.scrollBtn?.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
