@@ -2665,3 +2665,172 @@ footer{
         font-size:1.1rem;
     }
 }
+/* =========================================================
+   PODCAST SECTION
+========================================================= */
+
+.podcast-container{
+
+    max-width:1300px;
+
+    margin:0 auto;
+
+    padding:0 30px;
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:40px;
+}
+
+.podcast-card{
+
+    background:white;
+
+    border-radius:32px;
+
+    overflow:hidden;
+
+    box-shadow:var(--shadow-md);
+
+    transition:var(--transition);
+
+    border:1px solid rgba(11,90,167,.08);
+}
+
+.podcast-card:hover{
+
+    transform:translateY(-12px);
+
+    box-shadow:var(--shadow-lg);
+}
+
+.podcast-image{
+
+    height:320px;
+
+    overflow:hidden;
+}
+
+.podcast-image img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    transition:var(--transition);
+}
+
+.podcast-card:hover img{
+
+    transform:scale(1.05);
+}
+
+.podcast-content{
+
+    padding:40px;
+}
+
+.podcast-tag{
+
+    display:inline-block;
+
+    padding:8px 18px;
+
+    border-radius:50px;
+
+    background:rgba(30,215,96,.12);
+
+    color:#1DB954;
+
+    font-size:.85rem;
+
+    font-weight:800;
+
+    margin-bottom:20px;
+
+    text-transform:uppercase;
+}
+
+.podcast-content h3{
+
+    font-size:2rem;
+
+    color:var(--primary-dark);
+
+    margin-bottom:20px;
+
+    font-weight:900;
+}
+
+.podcast-content p{
+
+    color:var(--text-light);
+
+    font-size:1.05rem;
+
+    margin-bottom:35px;
+
+    line-height:1.7;
+}
+
+.podcast-btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:18px 32px;
+
+    background:#1DB954;
+
+    color:white;
+
+    border-radius:18px;
+
+    font-weight:800;
+
+    transition:var(--transition);
+
+    box-shadow:
+    0 15px 35px rgba(29,185,84,.25);
+}
+
+.podcast-btn:hover{
+
+    transform:translateY(-5px);
+
+    background:#18a74a;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+    .podcast-container{
+
+        grid-template-columns:1fr;
+
+        padding:0 20px;
+    }
+
+    .podcast-image{
+
+        height:240px;
+    }
+
+    .podcast-content{
+
+        padding:30px 25px;
+    }
+
+    .podcast-content h3{
+
+        font-size:1.6rem;
+    }
+}
