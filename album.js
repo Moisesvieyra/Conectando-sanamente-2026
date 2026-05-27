@@ -1,5 +1,6 @@
 /* ========================================= */
-/* AGUAKAN ALBUM ENGINE V2 */
+/* AGUAKAN ALBUM ENGINE V3 */
+/* CONECTANDO SANAMENTE 2026 */
 /* ========================================= */
 
 import { auth, db, storage } from "./firebase-config.js";
@@ -24,10 +25,11 @@ console.log(`
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ALBUM ENGINE • CONECTANDO SANAMENTE 2026
-STATUS : ONLINE
-MODE   : PREMIUM EXPERIENCE
-STORAGE: CONNECTED
-DATABASE: CONNECTED
+STATUS   : ONLINE
+MODE     : PREMIUM EXPERIENCE
+STORAGE  : CONNECTED
+DATABASE : CONNECTED
+VERSION  : V3 STABLE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 `);
@@ -117,7 +119,7 @@ function updateProgress(){
 }
 
 /* ========================================= */
-/* LOAD ALBUM FROM FIRESTORE + STORAGE FALLBACK */
+/* LOAD ALBUM FROM FIRESTORE + STORAGE */
 /* ========================================= */
 
 async function loadAlbum(user){
@@ -134,6 +136,8 @@ async function loadAlbum(user){
 
     let firestoreData = {};
 
+    /* INTENTA LEER FIRESTORE */
+
     try{
 
         const albumRef = doc(db, "albums", user.uid);
@@ -144,22 +148,28 @@ async function loadAlbum(user){
 
             firestoreData = albumSnap.data();
 
+            console.log("✅ Álbum cargado desde Firestore");
+
         }
 
     }catch(error){
 
         console.warn(
-            "Firestore no respondió. Intentando cargar desde Storage:",
+            "⚠️ Firestore no respondió. Se intentará cargar desde Storage.",
             error
         );
 
     }
+
+    /* CARGA CADA DÍA */
 
     for(const slot of slots){
 
         const day = slot.dataset.day;
 
         let imageUrl = firestoreData[`day${day}`];
+
+        /* SI NO EXISTE EN FIRESTORE, BUSCA DIRECTO EN STORAGE */
 
         if(!imageUrl){
 
@@ -171,6 +181,8 @@ async function loadAlbum(user){
                 );
 
                 imageUrl = await getDownloadURL(storageRef);
+
+                console.log(`✅ Día ${day} cargado desde Storage`);
 
             }catch(error){
 
@@ -201,6 +213,7 @@ async function loadAlbum(user){
     updateProgress();
 
 }
+
 /* ========================================= */
 /* RENDER IMAGE IN CARD */
 /* ========================================= */
@@ -220,8 +233,6 @@ function renderStickerImage(slot, imageUrl, animate = true){
         image.classList.add("uploaded-image");
 
         slot.classList.add("completed");
-
-        slot.dataset.completed = "true";
 
         if(animate){
 
@@ -277,7 +288,10 @@ function renderStickerImage(slot, imageUrl, animate = true){
 
     image.onerror = () => {
 
-        console.error("No se pudo cargar la imagen:", imageUrl);
+        console.error(
+            "❌ No se pudo cargar la imagen:",
+            imageUrl
+        );
 
     };
 
@@ -311,6 +325,8 @@ slots.forEach(slot => {
 
             alert("Solo se permiten imágenes.");
 
+            input.value = "";
+
             return;
 
         }
@@ -321,11 +337,21 @@ slots.forEach(slot => {
 
             alert("Debes iniciar sesión.");
 
+            input.value = "";
+
             return;
 
         }
 
         const day = slot.dataset.day;
+
+        const wasCompleted = slot.dataset.completed === "true";
+
+        let downloadURL = null;
+
+        /* ========================================= */
+        /* 1. SUBIR A STORAGE */
+        /* ========================================= */
 
         try{
 
@@ -338,30 +364,40 @@ slots.forEach(slot => {
 
             await uploadBytes(storageRef, file);
 
-            const downloadURL = await getDownloadURL(storageRef);
+            downloadURL = await getDownloadURL(storageRef);
 
- try{
+            console.log(
+                `✅ Imagen del día ${day} subida a Storage:`,
+                downloadURL
+            );
 
-    await setDoc(
-        doc(db, "albums", user.uid),
-        {
-            [`day${day}`]: downloadURL,
-            email: user.email,
-            updatedAt: Date.now()
-        },
-        { merge:true }
-    );
+        }catch(error){
 
-}catch(error){
+            console.error("❌ Error en Storage:", error);
 
-    console.warn(
-        "La imagen subió a Storage, pero Firestore no guardó la URL:",
-        error
-    );
+            alert(
+                `Error subiendo imagen a Storage: ${error.code || error.message}`
+            );
 
-}
+            slot.classList.remove("uploading");
 
-            renderStickerImage(slot, downloadURL, true);
+            input.value = "";
+
+            return;
+
+        }
+
+        /* ========================================= */
+        /* 2. MOSTRAR IMAGEN EN PANTALLA */
+        /* ========================================= */
+
+        try{
+
+            renderStickerImage(
+                slot,
+                downloadURL,
+                true
+            );
 
             slot.classList.remove("completed");
 
@@ -373,25 +409,58 @@ slots.forEach(slot => {
 
             playPop();
 
-            if(!slot.dataset.completed || slot.dataset.completed !== "true"){
-
-                slot.dataset.completed = "true";
+            if(!wasCompleted){
 
                 completed++;
 
-                updateProgress();
-
-            }else{
-
-                updateProgress();
-
             }
+
+            slot.dataset.completed = "true";
+
+            updateProgress();
+
+            console.log(
+                `✅ Imagen del día ${day} pintada en el álbum`
+            );
 
         }catch(error){
 
-            console.error("Error subiendo imagen:", error);
+            console.error("❌ Error visual:", error);
 
-            alert("Error subiendo imagen. Revisa consola o permisos de Firebase.");
+            alert("La imagen subió, pero hubo un error visual.");
+
+        }
+
+        /* ========================================= */
+        /* 3. GUARDAR URL EN FIRESTORE */
+        /* ========================================= */
+
+        try{
+
+            await setDoc(
+                doc(db, "albums", user.uid),
+                {
+                    [`day${day}`]: downloadURL,
+                    email:user.email,
+                    updatedAt:Date.now()
+                },
+                { merge:true }
+            );
+
+            console.log(
+                `✅ URL del día ${day} guardada en Firestore`
+            );
+
+        }catch(error){
+
+            console.warn(
+                "⚠️ La imagen subió a Storage, pero Firestore no guardó la URL:",
+                error
+            );
+
+            alert(
+                `La imagen subió, pero Firestore falló: ${error.code || error.message}`
+            );
 
         }finally{
 
@@ -491,7 +560,11 @@ if(closePreview){
 
     closePreview.addEventListener("click", () => {
 
-        previewModal.style.display = "none";
+        if(previewModal){
+
+            previewModal.style.display = "none";
+
+        }
 
     });
 
