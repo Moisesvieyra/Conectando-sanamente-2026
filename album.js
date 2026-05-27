@@ -55,6 +55,51 @@ const closePreview = document.querySelector(".close-preview");
 const userName = document.getElementById("user-name");
 
 /* ========================================= */
+/* DAILY LOCK CONFIG */
+/* ========================================= */
+
+/* Cambia esta fecha al día real en que inicia el reto */
+const challengeStartDate = new Date("2026-06-17T00:00:00");
+
+function getCurrentChallengeDay(){
+
+    const today = new Date();
+
+    today.setHours(0,0,0,0);
+
+    const start = new Date(challengeStartDate);
+
+    start.setHours(0,0,0,0);
+
+    const diffTime = today - start;
+
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    if(diffDays < 1){
+
+        return 0;
+
+    }
+
+    if(diffDays > total){
+
+        return total;
+
+    }
+
+    return diffDays;
+
+}
+
+function isDayUnlocked(day){
+
+    const currentDay = getCurrentChallengeDay();
+
+    return Number(day) <= currentDay;
+
+}
+
+/* ========================================= */
 /* VARIABLES */
 /* ========================================= */
 
@@ -83,6 +128,7 @@ onAuthStateChanged(auth, async(user) => {
     }
 
     await loadAlbum(user);
+    applyDailyLocks();
 
 });
 
@@ -309,11 +355,21 @@ slots.forEach(slot => {
 
     if(!input) return;
 
-    slot.addEventListener("click", () => {
+ slot.addEventListener("click", () => {
 
-        input.click();
+    const day = slot.dataset.day;
 
-    });
+    if(!isDayUnlocked(day)){
+
+        alert(`🔒 El reto del día ${day} aún no está desbloqueado.`);
+
+        return;
+
+    }
+
+    input.click();
+
+});
 
     input.addEventListener("change", async(e) => {
 
@@ -344,10 +400,43 @@ slots.forEach(slot => {
         }
 
         const day = slot.dataset.day;
+        if(!isDayUnlocked(day)){
+
+    alert(`🔒 El reto del día ${day} aún no está disponible.`);
+
+    input.value = "";
+
+    return;
+
+}
 
         const wasCompleted = slot.dataset.completed === "true";
 
         let downloadURL = null;
+
+        /* ========================================= */
+/* APPLY DAILY LOCKS */
+/* ========================================= */
+
+function applyDailyLocks(){
+
+    slots.forEach(slot => {
+
+        const day = slot.dataset.day;
+
+        if(!isDayUnlocked(day)){
+
+            slot.classList.add("locked");
+
+        }else{
+
+            slot.classList.remove("locked");
+
+        }
+
+    });
+
+}
 
         /* ========================================= */
         /* 1. SUBIR A STORAGE */
