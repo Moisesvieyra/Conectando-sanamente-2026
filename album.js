@@ -108,6 +108,76 @@ let completed = 0;
 const total = 21;
 
 /* ========================================= */
+/* DAILY LOCK CONFIG */
+/* ========================================= */
+
+/* FECHA DE INICIO DEL RETO */
+/* Ajusta esta fecha al día real en que inicia el reto */
+const challengeStartDate = new Date("2026-06-17T00:00:00");
+
+function getCurrentChallengeDay(){
+
+    const today = new Date();
+
+    today.setHours(0,0,0,0);
+
+    const start = new Date(challengeStartDate);
+
+    start.setHours(0,0,0,0);
+
+    const diffTime = today.getTime() - start.getTime();
+
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    if(diffDays < 1){
+
+        return 0;
+
+    }
+
+    if(diffDays > total){
+
+        return total;
+
+    }
+
+    return diffDays;
+
+}
+
+function isDayUnlocked(day){
+
+    const currentDay = getCurrentChallengeDay();
+
+    return Number(day) <= currentDay;
+
+}
+
+/* ========================================= */
+/* APPLY DAILY LOCKS */
+/* ========================================= */
+
+function applyDailyLocks(){
+
+    slots.forEach(slot => {
+
+        const day = slot.dataset.day;
+
+        if(!isDayUnlocked(day)){
+
+            slot.classList.add("locked");
+
+        }else{
+
+            slot.classList.remove("locked");
+
+        }
+
+    });
+
+}
+
+/* ========================================= */
 /* AUTH STATE */
 /* ========================================= */
 
