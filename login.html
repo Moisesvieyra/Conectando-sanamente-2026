@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <!-- =========================================================
+       META
+    ========================================================= -->
+
+    <meta charset="UTF-8">
+
+    <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Aguakan • Login Enterprise
+    </title>
+
+    <!-- =========================================================
+       FONTS + ICONS
+    ========================================================= -->
+
+    <link rel="preconnect"
+    href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+    <!-- =========================================================
+       STYLES
+    ========================================================= -->
+
+    <style>
+
+        /* =========================================================
+           ROOT
+        ========================================================= */
+
+        :root{
+
+            --primary:#0b5aa7;
+            --primary-dark:#062b52;
+            --secondary:#20c0d8;
+
+            --white:#ffffff;
+
+            --glass:
+            rgba(255,255,255,.12);
+
+            --shadow:
+            0 25px 55px rgba(0,0,0,.18);
+
+            --gradient:
+            linear-gradient(
+                135deg,
+                #0b5aa7,
+                #20c0d8
+            );
+
+        }
+
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+
+            min-height:100vh;
+
+            font-family:'Poppins',sans-serif;
+
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            overflow:hidden;
+
+            background:
+            linear-gradient(
+                135deg,
+                #062b52 0%,
+                #0b5aa7 40%,
+                #20c0d8 100%
+            );
+
+            position:relative;
+        }
+
+        /* =========================================================
+           BACKGROUND EFFECTS
+        ========================================================= */
+
+        body::before{
+
+            content:'';
+
+            position:absolute;
+
+            width:700px;
+            height:700px;
+
+            background:
+            radial-gradient(
+                circle,
+                rgba(255,255,255,.18),
+                transparent 70%
+            );
+
+            top:-250px;
+            right:-250px;
+
+            filter:blur(50px);
+        }
+
+        body::after{
+
+            content:'';
+
+            position:absolute;
+
+            width:600px;
+            height:600px;
+
+            background:
+            radial-gradient(
+                circle,
+                rgba(32,192,216,.20),
+                transparent 70%
+            );
+
+            bottom:-250px;
+            left:-250px;
+
+            filter:blur(60px);
+        }
+
+        /* =========================================================
+           LOGIN CARD
+        ========================================================= */
+
+        .login-container{
+
+            position:relative;
+
+            z-index:10;
+
+            width:100%;
+
+            max-width:430px;
+
+            padding:20px;
+        }
+
+        .login-card{
+
+            background:
+            rgba(255,255,255,.12);
+
+            backdrop-filter:blur(25px);
+
+            border:
+            1px solid rgba(255,255,255,.18);
+
+            border-radius:35px;
+
+            padding:50px 40px;
+
+            box-shadow:var(--shadow);
+
+            overflow:hidden;
+
+            position:relative;
+        }
+
+        .login-card::before{
+
+            content:'';
+
+            position:absolute;
+
+            inset:0;
+
+            background:
+            linear-gradient(
+                135deg,
+                rgba(255,255,255,.12),
+                transparent
+            );
+
+            pointer-events:none;
+        }
+
+        /* =========================================================
+           LOGO
+        ========================================================= */
+
+        .logo{
+
+            display:flex;
+
+            flex-direction:column;
+
+            align-items:center;
+
+            margin-bottom:35px;
+        }
+
+        .logo-icon{
+
+            width:90px;
+            height:90px;
+
+            border-radius:30px;
+
+            background:var(--gradient);
+
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            color:white;
+
+            font-size:2.5rem;
+
+            margin-bottom:20px;
+
+            box-shadow:
+            0 20px 40px rgba(0,0,0,.18);
+        }
+
+        .logo h1{
+
+            color:white;
+
+            font-size:2rem;
+
+            font-weight:900;
+
+            letter-spacing:-1px;
+        }
+
+        .logo p{
+
+            color:
+            rgba(255,255,255,.75);
+
+            font-size:.95rem;
+
+            margin-top:8px;
+        }
+
+        /* =========================================================
+           FORM
+        ========================================================= */
+
+        .input-group{
+
+            position:relative;
+
+            margin-bottom:22px;
+        }
+
+        .input-group i{
+
+            position:absolute;
+
+            left:18px;
+            top:50%;
+
+            transform:translateY(-50%);
+
+            color:
+            rgba(255,255,255,.7);
+
+            font-size:1rem;
+        }
+
+        .input-group input{
+
+            width:100%;
+
+            padding:
+            18px 18px 18px 55px;
+
+            border:none;
+
+            outline:none;
+
+            border-radius:18px;
+
+            background:
+            rgba(255,255,255,.10);
+
+            color:white;
+
+            font-size:1rem;
+
+            font-family:'Poppins';
+
+            border:
+            1px solid rgba(255,255,255,.12);
+
+            transition:.4s ease;
+        }
+
+        .input-group input::placeholder{
+
+            color:
+            rgba(255,255,255,.55);
+        }
+
+        .input-group input:focus{
+
+            border-color:
+            rgba(255,255,255,.35);
+
+            background:
+            rgba(255,255,255,.16);
+
+            transform:translateY(-2px);
+        }
+
+        /* =========================================================
+           BUTTONS
+        ========================================================= */
+
+        .btn{
+
+            width:100%;
+
+            padding:18px;
+
+            border:none;
+
+            border-radius:18px;
+
+            font-family:'Poppins';
+
+            font-size:1rem;
+
+            font-weight:800;
+
+            cursor:pointer;
+
+            transition:.4s ease;
+
+            margin-top:10px;
+        }
+
+        .btn-login{
+
+            background:var(--gradient);
+
+            color:white;
+
+            box-shadow:
+            0 15px 35px rgba(11,90,167,.35);
+        }
+
+        .btn-login:hover{
+
+            transform:translateY(-4px);
+
+            box-shadow:
+            0 25px 45px rgba(11,90,167,.45);
+        }
+
+        .btn-register{
+
+            background:
+            rgba(255,255,255,.12);
+
+            color:white;
+
+            border:
+            1px solid rgba(255,255,255,.15);
+        }
+
+        .btn-register:hover{
+
+            background:
+            rgba(255,255,255,.20);
+
+            transform:translateY(-4px);
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        .login-footer{
+
+            text-align:center;
+
+            margin-top:30px;
+
+            color:
+            rgba(255,255,255,.65);
+
+            font-size:.9rem;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media(max-width:500px){
+
+            .login-card{
+
+                padding:40px 25px;
+
+                border-radius:25px;
+            }
+
+            .logo h1{
+
+                font-size:1.6rem;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- =========================================================
+       LOGIN CONTAINER
+    ========================================================= -->
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <!-- LOGO -->
+
+            <div class="logo">
+
+                <div class="logo-icon">
+
+                    <i class="fa-solid fa-droplet"></i>
+
+                </div>
+
+                <h1>
+                    Aguakan
+                </h1>
+
+                <p>
+                    Conectando Sanamente 2026
+                </p>
+
+            </div>
+
+            <!-- EMAIL -->
+
+            <div class="input-group">
+
+                <i class="fa-solid fa-envelope"></i>
+
+                <input
+                type="email"
+                id="email"
+                placeholder="Correo corporativo">
+
+            </div>
+
+            <!-- PASSWORD -->
+
+            <div class="input-group">
+
+                <i class="fa-solid fa-lock"></i>
+
+                <input
+                type="password"
+                id="password"
+                placeholder="Contraseña">
+
+            </div>
+
+            <!-- BUTTON LOGIN -->
+
+            <button
+            class="btn btn-login"
+            onclick="login()">
+
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Iniciar Sesión
+
+            </button>
+
+            <!-- BUTTON REGISTER -->
+
+            <button
+            class="btn btn-register"
+            onclick="register()">
+
+                <i class="fa-solid fa-user-plus"></i>
+                Crear Cuenta
+
+            </button>
+
+            <!-- FOOTER -->
+
+            <div class="login-footer">
+
+                Plataforma Empresarial de Bienestar
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+       FIREBASE
+    ========================================================= -->
+
+    <script
+    type="module"
+    src="firebase-config.js">
+    </script>
+
+    <!-- =========================================================
+       FUNCTIONS
+    ========================================================= -->
+
+    <script>
+
+        function register(){
+
+            const email =
+            document.getElementById("email").value;
+
+            const password =
+            document.getElementById("password").value;
+
+            registerUser(email,password);
+
+        }
+
+        function login(){
+
+            const email =
+            document.getElementById("email").value;
+
+            const password =
+            document.getElementById("password").value;
+
+            loginUser(email,password);
+
+        }
+
+    </script>
+
+</body>
+</html>
