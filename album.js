@@ -21,6 +21,7 @@ import {
     setDoc,
     getDoc,
     collection,
+    getDocs,
     getDocsFromServer
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 console.log(`
@@ -534,7 +535,26 @@ async function getRankingData(){
 
     const albumsRef = collection(db, "albums");
 
-    const snapshot = await getDocsFromServer(albumsRef);
+    let snapshot = null;
+
+    try{
+
+        snapshot = await getDocsFromServer(albumsRef);
+
+        console.log("✅ Ranking cargado desde servidor");
+
+    }catch(error){
+
+        console.warn(
+            "⚠️ No se pudo cargar ranking desde servidor. Usando lectura normal/cache:",
+            error
+        );
+
+        snapshot = await getDocs(albumsRef);
+
+        console.log("✅ Ranking cargado con lectura normal/cache");
+
+    }
 
     const ranking = [];
 
@@ -544,6 +564,8 @@ async function getRankingData(){
 
         const completedCount =
         data.completedCount ?? countCompletedDays(data);
+
+        if(completedCount <= 0) return;
 
         ranking.push({
 
