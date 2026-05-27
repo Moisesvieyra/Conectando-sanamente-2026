@@ -1,6 +1,24 @@
 /* ========================================= */
-/* AGUAKAN ALBUM ENGINE V1 */
+/* AGUAKAN ALBUM ENGINE V2 */
 /* ========================================= */
+
+import { auth, db, storage } from "./firebase-config.js";
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+import {
+    doc,
+    setDoc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 console.log(`
 
@@ -8,6 +26,8 @@ console.log(`
 ALBUM ENGINE • CONECTANDO SANAMENTE 2026
 STATUS : ONLINE
 MODE   : PREMIUM EXPERIENCE
+STORAGE: CONNECTED
+DATABASE: CONNECTED
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 `);
@@ -30,6 +50,8 @@ const previewImage = document.getElementById("previewImage");
 
 const closePreview = document.querySelector(".close-preview");
 
+const userName = document.getElementById("user-name");
+
 /* ========================================= */
 /* VARIABLES */
 /* ========================================= */
@@ -39,6 +61,30 @@ let completed = 0;
 const total = 21;
 
 /* ========================================= */
+/* AUTH STATE */
+/* ========================================= */
+
+onAuthStateChanged(auth, async(user) => {
+
+    if(!user){
+
+        window.location.href = "login.html";
+
+        return;
+
+    }
+
+    if(userName){
+
+        userName.innerText = user.email;
+
+    }
+
+    await loadAlbum(user);
+
+});
+
+/* ========================================= */
 /* PROGRESS */
 /* ========================================= */
 
@@ -46,15 +92,161 @@ function updateProgress(){
 
     const percent = Math.round((completed / total) * 100);
 
-    progressText.innerText = `${percent}%`;
+    if(progressText){
 
-    progressDays.innerText = `${completed} de ${total} completados`;
+        progressText.innerText = `${percent}%`;
 
-    const circumference = 377;
+    }
 
-    const offset = circumference - (percent / 100) * circumference;
+    if(progressDays){
 
-    progressRing.style.strokeDashoffset = offset;
+        progressDays.innerText = `${completed} de ${total} completados`;
+
+    }
+
+    if(progressRing){
+
+        const circumference = 377;
+
+        const offset = circumference - (percent / 100) * circumference;
+
+        progressRing.style.strokeDashoffset = offset;
+
+    }
+
+}
+
+/* ========================================= */
+/* LOAD ALBUM FROM FIRESTORE */
+/* ========================================= */
+
+async function loadAlbum(user){
+
+    completed = 0;
+
+    const albumRef = doc(db, "albums", user.uid);
+
+    const albumSnap = await getDoc(albumRef);
+
+    slots.forEach(slot => {
+
+        slot.dataset.completed = "";
+
+        slot.classList.remove("completed");
+
+    });
+
+    if(albumSnap.exists()){
+
+        const data = albumSnap.data();
+
+        slots.forEach(slot => {
+
+            const day = slot.dataset.day;
+
+            const imageUrl = data[`day${day}`];
+
+            if(imageUrl){
+
+                renderStickerImage(slot, imageUrl, false);
+
+                slot.dataset.completed = "true";
+
+                slot.classList.add("completed");
+
+                completed++;
+
+            }
+
+        });
+
+    }
+
+    updateProgress();
+
+}
+
+/* ========================================= */
+/* RENDER IMAGE IN CARD */
+/* ========================================= */
+
+function renderStickerImage(slot, imageUrl, animate = true){
+
+    const image = slot.querySelector(".slot-image img");
+
+    if(!image || !imageUrl) return;
+
+    image.onload = () => {
+
+        image.style.display = "block";
+
+        image.style.visibility = "visible";
+
+        image.classList.add("uploaded-image");
+
+        slot.classList.add("completed");
+
+        slot.dataset.completed = "true";
+
+        if(animate){
+
+            image.style.transition = "none";
+
+            image.style.opacity = "0";
+
+            image.style.transform = `
+                scale(2.2)
+                rotate(-18deg)
+                translateY(-150px)
+            `;
+
+            image.style.filter = `
+                blur(18px)
+                brightness(2)
+                saturate(1.7)
+            `;
+
+            setTimeout(() => {
+
+                image.style.transition = `
+                    1s cubic-bezier(.17,.89,.32,1.49)
+                `;
+
+                image.style.opacity = "1";
+
+                image.style.transform = `
+                    scale(1)
+                    rotate(0deg)
+                    translateY(0)
+                `;
+
+                image.style.filter = `
+                    blur(0px)
+                    brightness(1)
+                    saturate(1)
+                `;
+
+            },100);
+
+        }else{
+
+            image.style.opacity = "1";
+
+            image.style.transform = "scale(1)";
+
+            image.style.filter = "none";
+
+        }
+
+    };
+
+    image.onerror = () => {
+
+        console.error("No se pudo cargar la imagen:", imageUrl);
+
+    };
+
+    image.src = imageUrl;
 
 }
 
@@ -66,9 +258,7 @@ slots.forEach(slot => {
 
     const input = slot.querySelector(".file-input");
 
-    const image = slot.querySelector(".slot-image img");
-
-    /* CLICK EN CARD */
+    if(!input) return;
 
     slot.addEventListener("click", () => {
 
@@ -76,15 +266,11 @@ slots.forEach(slot => {
 
     });
 
-    /* SUBIR FOTO */
-
-    input.addEventListener("change", (e) => {
+    input.addEventListener("change", async(e) => {
 
         const file = e.target.files[0];
 
         if(!file) return;
-
-        /* VALIDAR IMAGEN */
 
         if(!file.type.startsWith("image/")){
 
@@ -94,69 +280,54 @@ slots.forEach(slot => {
 
         }
 
-        /* READER */
+        const user = auth.currentUser;
 
-        const reader = new FileReader();
+        if(!user){
 
-        reader.onload = function(event){
+            alert("Debes iniciar sesión.");
 
- /* ========================================= */
-/* EFECTO STICKER PREMIUM */
-/* ========================================= */
+            return;
 
-image.style.transition = "none";
+        }
 
-image.style.opacity = "0";
+        const day = slot.dataset.day;
 
-image.style.transform = `
-scale(2)
-rotate(-18deg)
-translateY(-120px)
-`;
+        try{
 
-image.style.filter = `
-blur(18px)
-brightness(2)
-`;
+            slot.classList.add("uploading");
 
-setTimeout(() => {
+            const storageRef = ref(
+                storage,
+                `usuarios/${user.uid}/dia-${day}.jpg`
+            );
 
-    image.src = event.target.result;
+            await uploadBytes(storageRef, file);
 
-    image.style.transition = `
-    1s cubic-bezier(.17,.89,.32,1.49)
-    `;
+            const downloadURL = await getDownloadURL(storageRef);
 
-    image.style.opacity = "1";
+            await setDoc(
+                doc(db, "albums", user.uid),
+                {
+                    [`day${day}`]: downloadURL,
+                    email: user.email,
+                    updatedAt: Date.now()
+                },
+                { merge:true }
+            );
 
-    image.style.transform = `
-    scale(1)
-    rotate(0deg)
-    translateY(0)
-    `;
+            renderStickerImage(slot, downloadURL, true);
 
-    image.style.filter = `
-    blur(0px)
-    brightness(1)
-    `;
+            slot.classList.remove("completed");
 
-},100);
+            void slot.offsetWidth;
 
-            /* EFECTO PREMIUM */
-
-slot.classList.remove("completed");
-
-void slot.offsetWidth;
-
-slot.classList.add("completed");
+            slot.classList.add("completed");
 
             createParticles(slot);
 
             playPop();
 
-            /* CONTAR */
-
-            if(!slot.dataset.completed){
+            if(!slot.dataset.completed || slot.dataset.completed !== "true"){
 
                 slot.dataset.completed = "true";
 
@@ -164,11 +335,25 @@ slot.classList.add("completed");
 
                 updateProgress();
 
+            }else{
+
+                updateProgress();
+
             }
 
-        };
+        }catch(error){
 
-        reader.readAsDataURL(file);
+            console.error("Error subiendo imagen:", error);
+
+            alert("Error subiendo imagen. Revisa consola o permisos de Firebase.");
+
+        }finally{
+
+            slot.classList.remove("uploading");
+
+            input.value = "";
+
+        }
 
     });
 
@@ -180,7 +365,7 @@ slot.classList.add("completed");
 
 function createParticles(slot){
 
-    for(let i=0; i<12; i++){
+    for(let i = 0; i < 14; i++){
 
         const particle = document.createElement("span");
 
@@ -188,9 +373,9 @@ function createParticles(slot){
 
         slot.appendChild(particle);
 
-        const x = Math.random() * 200 - 100;
+        const x = Math.random() * 260 - 130;
 
-        const y = Math.random() * 200 - 100;
+        const y = Math.random() * 260 - 130;
 
         particle.style.left = "50%";
 
@@ -200,7 +385,7 @@ function createParticles(slot){
 
         particle.style.setProperty("--y", `${y}px`);
 
-        particle.style.animationDelay = `${Math.random() * .3}s`;
+        particle.style.animationDelay = `${Math.random() * .25}s`;
 
         setTimeout(() => {
 
@@ -213,16 +398,20 @@ function createParticles(slot){
 }
 
 /* ========================================= */
-/* POP SOUND */
+/* SOUND */
 /* ========================================= */
 
 function playPop(){
 
     const audio = new Audio("sounds/pop.mp3");
 
-    audio.volume = .4;
+    audio.volume = .35;
 
-    audio.play();
+    audio.play().catch(() => {
+
+        console.log("Audio bloqueado por el navegador.");
+
+    });
 
 }
 
@@ -236,9 +425,13 @@ document.querySelectorAll(".slot-image img").forEach(img => {
 
         e.stopPropagation();
 
-        previewModal.style.display = "flex";
+        if(previewModal && previewImage){
 
-        previewImage.src = img.src;
+            previewModal.style.display = "flex";
+
+            previewImage.src = img.src;
+
+        }
 
     });
 
@@ -248,42 +441,70 @@ document.querySelectorAll(".slot-image img").forEach(img => {
 /* CLOSE MODAL */
 /* ========================================= */
 
-closePreview.addEventListener("click", () => {
+if(closePreview){
 
-    previewModal.style.display = "none";
-
-});
-
-previewModal.addEventListener("click", (e) => {
-
-    if(e.target === previewModal){
+    closePreview.addEventListener("click", () => {
 
         previewModal.style.display = "none";
 
+    });
+
+}
+
+if(previewModal){
+
+    previewModal.addEventListener("click", (e) => {
+
+        if(e.target === previewModal){
+
+            previewModal.style.display = "none";
+
+        }
+
+    });
+
+}
+
+/* ========================================= */
+/* LEGEND DETECTION */
+/* ========================================= */
+
+function checkLegend(){
+
+    if(completed === total){
+
+        setTimeout(() => {
+
+            alert("🏆 ¡FELICIDADES! HAS COMPLETADO EL ÁLBUM.");
+
+        },800);
+
     }
 
-});
+}
 
 /* ========================================= */
-/* FAKE USER */
+/* WATCH PROGRESS */
 /* ========================================= */
 
-const fakeUser = {
+if(progressText){
 
-    name:"Moisés Vieyra"
+    const observer = new MutationObserver(() => {
 
-};
+        checkLegend();
 
-document.getElementById("user-name").innerText = fakeUser.name;
+    });
+
+    observer.observe(progressText, {
+
+        childList:true
+
+    });
+
+}
 
 /* ========================================= */
-/* INIT */
-/* ========================================= */
-
-updateProgress();
-
-/* ========================================= */
-/* PARTICLE STYLE AUTO */
+/* AUTO STYLE */
 /* ========================================= */
 
 const style = document.createElement("style");
@@ -299,6 +520,10 @@ style.innerHTML = `
     background:white;
     pointer-events:none;
     animation:particle 1.2s forwards ease;
+    z-index:50;
+    box-shadow:
+    0 0 12px rgba(255,255,255,.9),
+    0 0 22px rgba(17,192,243,.8);
 
 }
 
@@ -330,13 +555,13 @@ style.innerHTML = `
 
     0%{
 
-        transform:scale(.9);
+        transform:scale(.96);
 
     }
 
     50%{
 
-        transform:scale(1.04);
+        transform:scale(1.035);
 
     }
 
@@ -348,40 +573,54 @@ style.innerHTML = `
 
 }
 
-`;
+.uploading{
 
-document.head.appendChild(style);
+    pointer-events:none;
+    position:relative;
+    overflow:hidden;
 
-/* ========================================= */
-/* LEGEND DETECTION */
-/* ========================================= */
+}
 
-function checkLegend(){
+.uploading::before{
 
-    if(completed === total){
+    content:"";
 
-        setTimeout(() => {
+    position:absolute;
+    inset:0;
+    background:
+    linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,.45),
+        transparent
+    );
+    z-index:20;
+    animation:loadingShine 1s infinite;
 
-            alert("🏆 ¡FELICIDADES! HAS COMPLETADO EL ÁLBUM.");
+}
 
-        },800);
+@keyframes loadingShine{
+
+    0%{
+
+        transform:translateX(-120%);
+
+    }
+
+    100%{
+
+        transform:translateX(180%);
 
     }
 
 }
 
+`;
+
+document.head.appendChild(style);
+
 /* ========================================= */
-/* WATCH PROGRESS */
+/* INIT */
 /* ========================================= */
 
-const observer = new MutationObserver(() => {
-
-    checkLegend();
-
-});
-
-observer.observe(progressText, {
-
-    childList:true
-
-});
+updateProgress();
