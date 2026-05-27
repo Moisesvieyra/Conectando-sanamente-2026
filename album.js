@@ -19,10 +19,7 @@ import {
 import {
     doc,
     setDoc,
-    getDoc,
-    collection,
-    getDocs,
-    getDocsFromServer
+    getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 console.log(`
 
@@ -533,51 +530,67 @@ function getUserLabel(data){
 
 async function getRankingData(){
 
-    const albumsRef = collection(db, "albums");
+    const user = auth.currentUser;
 
-    let snapshot = null;
+    if(!user){
 
-    try{
-
-        snapshot = await getDocsFromServer(albumsRef);
-
-        console.log("✅ Ranking cargado desde servidor");
-
-    }catch(error){
-
-        console.warn(
-            "⚠️ No se pudo cargar ranking desde servidor. Usando lectura normal/cache:",
-            error
-        );
-
-        snapshot = await getDocs(albumsRef);
-
-        console.log("✅ Ranking cargado con lectura normal/cache");
+        throw new Error("No hay usuario autenticado.");
 
     }
 
-    const ranking = [];
+    const token = await user.getIdToken();
 
-    snapshot.forEach(docSnap => {
+    const projectId = "conectando-sanamente";
 
-        const data = docSnap.data();
+    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/albums`;
 
-        const completedCount =
-        data.completedCount ?? countCompletedDays(data);
-
-        if(completedCount <= 0) return;
-
-        ranking.push({
-
-            uid: docSnap.id,
-            name: getUserLabel(data),
-            email: data.email || "",
-            completed: completedCount,
-            updatedAt: data.updatedAt || 0
-
-        });
-
+    const response = await fetch(url, {
+        method:"GET",
+        headers:{
+            Authorization:`Bearer ${token}`
+        }
     });
+
+    if(!response.ok){
+
+        const errorText = await response.text();
+
+        throw new Error(`Error REST Firestore: ${response.status} ${errorText}`);
+
+    }
+
+    const result = await response.json();
+
+    const documents = result.documents || [];
+
+    const ranking = documents.map(docItem => {
+
+        const fields = docItem.fields || {};
+
+        const uid = docItem.name.split("/").pop();
+
+        const email = fields.email?.stringValue || "";
+
+        const name =
+        fields.name?.stringValue ||
+        email ||
+        "Participante Aguakan";
+
+        const completed =
+        Number(fields.completedCount?.integerValue || 0);
+
+        const updatedAt =
+        Number(fields.updatedAt?.integerValue || 0);
+
+        return {
+            uid,
+            name,
+            email,
+            completed,
+            updatedAt
+        };
+
+    }).filter(user => user.completed > 0);
 
     ranking.sort((a,b) => {
 
@@ -590,6 +603,8 @@ async function getRankingData(){
         return a.updatedAt - b.updatedAt;
 
     });
+
+    console.log("✅ Ranking cargado desde Firestore REST:", ranking);
 
     return ranking;
 
