@@ -894,7 +894,7 @@ slots.forEach(slot => {
     name:user.email.split("@")[0],
     completedCount: completed,
     updatedAt:Date.now()
-}
+},
                 { merge:true }
             );
 
