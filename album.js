@@ -1,5 +1,5 @@
 /* ========================================= */
-/* AGUAKAN ALBUM ENGINE V3 */
+/* AGUAKAN ALBUM ENGINE V4 */
 /* CONECTANDO SANAMENTE 2026 */
 /* ========================================= */
 
@@ -29,7 +29,7 @@ STATUS   : ONLINE
 MODE     : PREMIUM EXPERIENCE
 STORAGE  : CONNECTED
 DATABASE : CONNECTED
-VERSION  : V3 STABLE
+VERSION  : V4 DAILY LOCKS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 `);
@@ -39,106 +39,55 @@ VERSION  : V3 STABLE
 /* ========================================= */
 
 const slots = document.querySelectorAll(".album-slot");
-
 const progressRing = document.getElementById("progress-ring");
-
 const progressText = document.getElementById("progress-text");
-
 const progressDays = document.getElementById("progress-days");
-
 const previewModal = document.getElementById("previewModal");
-
 const previewImage = document.getElementById("previewImage");
-
 const closePreview = document.querySelector(".close-preview");
-
 const userName = document.getElementById("user-name");
-
-/* ========================================= */
-/* DAILY LOCK CONFIG */
-/* ========================================= */
-
-/* Cambia esta fecha al día real en que inicia el reto */
-const challengeStartDate = new Date("2026-05-22T00:00:00");
-
-function getCurrentChallengeDay(){
-
-    const today = new Date();
-
-    today.setHours(0,0,0,0);
-
-    const start = new Date(challengeStartDate);
-
-    start.setHours(0,0,0,0);
-
-    const diffTime = today - start;
-
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-    if(diffDays < 1){
-
-        return 0;
-
-    }
-
-    if(diffDays > total){
-
-        return total;
-
-    }
-
-    return diffDays;
-
-}
-
-function isDayUnlocked(day){
-
-    const currentDay = getCurrentChallengeDay();
-
-    return Number(day) <= currentDay;
-
-}
 
 /* ========================================= */
 /* VARIABLES */
 /* ========================================= */
 
 let completed = 0;
-
 const total = 21;
 
 /* ========================================= */
 /* DAILY LOCK CONFIG */
 /* ========================================= */
 
-/* FECHA DE INICIO DEL RETO */
-/* Ajusta esta fecha al día real en que inicia el reto */
-const challengeStartDate = new Date("2026-06-17T00:00:00");
+/*
+    Cambia esta fecha al día real en que inicia el reto.
+
+    Ejemplo real:
+    const challengeStartDate = new Date("2026-06-17T00:00:00");
+
+    Para pruebas:
+    - Fecha de hoy = solo Día 1 desbloqueado.
+    - Fecha de hace 4 días = Día 1 al Día 5 desbloqueados.
+*/
+
+const challengeStartDate = new Date("2026-05-22T00:00:00");
 
 function getCurrentChallengeDay(){
 
     const today = new Date();
-
     today.setHours(0,0,0,0);
 
     const start = new Date(challengeStartDate);
-
     start.setHours(0,0,0,0);
 
     const diffTime = today.getTime() - start.getTime();
-
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
     if(diffDays < 1){
-
         return 0;
-
     }
 
     if(diffDays > total){
-
         return total;
-
     }
 
     return diffDays;
@@ -152,10 +101,6 @@ function isDayUnlocked(day){
     return Number(day) <= currentDay;
 
 }
-
-/* ========================================= */
-/* APPLY DAILY LOCKS */
-/* ========================================= */
 
 function applyDailyLocks(){
 
@@ -164,13 +109,9 @@ function applyDailyLocks(){
         const day = slot.dataset.day;
 
         if(!isDayUnlocked(day)){
-
             slot.classList.add("locked");
-
         }else{
-
             slot.classList.remove("locked");
-
         }
 
     });
@@ -192,12 +133,11 @@ onAuthStateChanged(auth, async(user) => {
     }
 
     if(userName){
-
         userName.innerText = user.email;
-
     }
 
     await loadAlbum(user);
+
     applyDailyLocks();
 
 });
@@ -211,21 +151,16 @@ function updateProgress(){
     const percent = Math.round((completed / total) * 100);
 
     if(progressText){
-
         progressText.innerText = `${percent}%`;
-
     }
 
     if(progressDays){
-
         progressDays.innerText = `${completed} de ${total} completados`;
-
     }
 
     if(progressRing){
 
         const circumference = 377;
-
         const offset = circumference - (percent / 100) * circumference;
 
         progressRing.style.strokeDashoffset = offset;
@@ -245,19 +180,15 @@ async function loadAlbum(user){
     slots.forEach(slot => {
 
         slot.dataset.completed = "";
-
         slot.classList.remove("completed");
 
     });
 
     let firestoreData = {};
 
-    /* INTENTA LEER FIRESTORE */
-
     try{
 
         const albumRef = doc(db, "albums", user.uid);
-
         const albumSnap = await getDoc(albumRef);
 
         if(albumSnap.exists()){
@@ -277,15 +208,11 @@ async function loadAlbum(user){
 
     }
 
-    /* CARGA CADA DÍA */
-
     for(const slot of slots){
 
         const day = slot.dataset.day;
 
         let imageUrl = firestoreData[`day${day}`];
-
-        /* SI NO EXISTE EN FIRESTORE, BUSCA DIRECTO EN STORAGE */
 
         if(!imageUrl){
 
@@ -317,7 +244,6 @@ async function loadAlbum(user){
             );
 
             slot.dataset.completed = "true";
-
             slot.classList.add("completed");
 
             completed++;
@@ -343,9 +269,7 @@ function renderStickerImage(slot, imageUrl, animate = true){
     image.onload = () => {
 
         image.style.display = "block";
-
         image.style.visibility = "visible";
-
         image.classList.add("uploaded-image");
 
         slot.classList.add("completed");
@@ -353,7 +277,6 @@ function renderStickerImage(slot, imageUrl, animate = true){
         if(animate){
 
             image.style.transition = "none";
-
             image.style.opacity = "0";
 
             image.style.transform = `
@@ -393,9 +316,7 @@ function renderStickerImage(slot, imageUrl, animate = true){
         }else{
 
             image.style.opacity = "1";
-
             image.style.transform = "scale(1)";
-
             image.style.filter = "none";
 
         }
@@ -425,21 +346,21 @@ slots.forEach(slot => {
 
     if(!input) return;
 
- slot.addEventListener("click", () => {
+    slot.addEventListener("click", () => {
 
-    const day = slot.dataset.day;
+        const day = slot.dataset.day;
 
-    if(!isDayUnlocked(day)){
+        if(!isDayUnlocked(day)){
 
-        alert(`🔒 El reto del día ${day} aún no está desbloqueado.`);
+            alert(`🔒 El reto del día ${day} aún no está desbloqueado.`);
 
-        return;
+            return;
 
-    }
+        }
 
-    input.click();
+        input.click();
 
-});
+    });
 
     input.addEventListener("change", async(e) => {
 
@@ -470,43 +391,20 @@ slots.forEach(slot => {
         }
 
         const day = slot.dataset.day;
+
         if(!isDayUnlocked(day)){
 
-    alert(`🔒 El reto del día ${day} aún no está disponible.`);
+            alert(`🔒 El reto del día ${day} aún no está disponible.`);
 
-    input.value = "";
+            input.value = "";
 
-    return;
+            return;
 
-}
+        }
 
         const wasCompleted = slot.dataset.completed === "true";
 
         let downloadURL = null;
-
-        /* ========================================= */
-/* APPLY DAILY LOCKS */
-/* ========================================= */
-
-function applyDailyLocks(){
-
-    slots.forEach(slot => {
-
-        const day = slot.dataset.day;
-
-        if(!isDayUnlocked(day)){
-
-            slot.classList.add("locked");
-
-        }else{
-
-            slot.classList.remove("locked");
-
-        }
-
-    });
-
-}
 
         /* ========================================= */
         /* 1. SUBIR A STORAGE */
@@ -569,9 +467,7 @@ function applyDailyLocks(){
             playPop();
 
             if(!wasCompleted){
-
                 completed++;
-
             }
 
             slot.dataset.completed = "true";
@@ -627,6 +523,8 @@ function applyDailyLocks(){
 
             input.value = "";
 
+            applyDailyLocks();
+
         }
 
     });
@@ -648,15 +546,12 @@ function createParticles(slot){
         slot.appendChild(particle);
 
         const x = Math.random() * 260 - 130;
-
         const y = Math.random() * 260 - 130;
 
         particle.style.left = "50%";
-
         particle.style.top = "50%";
 
         particle.style.setProperty("--x", `${x}px`);
-
         particle.style.setProperty("--y", `${y}px`);
 
         particle.style.animationDelay = `${Math.random() * .25}s`;
@@ -702,7 +597,6 @@ document.querySelectorAll(".slot-image img").forEach(img => {
         if(previewModal && previewImage){
 
             previewModal.style.display = "flex";
-
             previewImage.src = img.src;
 
         }
@@ -720,9 +614,7 @@ if(closePreview){
     closePreview.addEventListener("click", () => {
 
         if(previewModal){
-
             previewModal.style.display = "none";
-
         }
 
     });
@@ -734,9 +626,7 @@ if(previewModal){
     previewModal.addEventListener("click", (e) => {
 
         if(e.target === previewModal){
-
             previewModal.style.display = "none";
-
         }
 
     });
@@ -774,9 +664,7 @@ if(progressText){
     });
 
     observer.observe(progressText, {
-
         childList:true
-
     });
 
 }
@@ -890,6 +778,39 @@ style.innerHTML = `
         transform:translateX(180%);
 
     }
+
+}
+
+.album-slot.locked{
+
+    opacity:.45;
+    filter:grayscale(1);
+    cursor:not-allowed;
+
+}
+
+.album-slot.locked::before{
+
+    content:"🔒 BLOQUEADO";
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,45,90,.72);
+    color:white;
+    font-size:.85rem;
+    font-weight:900;
+    letter-spacing:1px;
+    z-index:30;
+    text-align:center;
+
+}
+
+.album-slot.locked:hover{
+
+    transform:none;
+    box-shadow:none;
 
 }
 
