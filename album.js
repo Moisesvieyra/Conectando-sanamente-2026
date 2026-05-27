@@ -108,16 +108,30 @@ function applyDailyLocks(){
 
         const day = slot.dataset.day;
 
-        if(!isDayUnlocked(day)){
-            slot.classList.add("locked");
-        }else{
+        const isCompleted = slot.dataset.completed === "true";
+
+        if(isCompleted){
+
             slot.classList.remove("locked");
+            slot.classList.add("completed");
+
+            return;
+
+        }
+
+        if(!isDayUnlocked(day)){
+
+            slot.classList.add("locked");
+
+        }else{
+
+            slot.classList.remove("locked");
+
         }
 
     });
 
 }
-
 /* ========================================= */
 /* AUTH STATE */
 /* ========================================= */
@@ -137,8 +151,6 @@ onAuthStateChanged(auth, async(user) => {
     }
 
     await loadAlbum(user);
-
-    applyDailyLocks();
 
 });
 
@@ -180,7 +192,10 @@ async function loadAlbum(user){
     slots.forEach(slot => {
 
         slot.dataset.completed = "";
+
         slot.classList.remove("completed");
+
+        slot.classList.remove("locked");
 
     });
 
@@ -189,6 +204,7 @@ async function loadAlbum(user){
     try{
 
         const albumRef = doc(db, "albums", user.uid);
+
         const albumSnap = await getDoc(albumRef);
 
         if(albumSnap.exists()){
@@ -202,7 +218,7 @@ async function loadAlbum(user){
     }catch(error){
 
         console.warn(
-            "⚠️ Firestore no respondió. Se intentará cargar desde Storage.",
+            "⚠️ Firestore no respondió. Se usará localStorage y Storage.",
             error
         );
 
@@ -216,6 +232,14 @@ async function loadAlbum(user){
 
         if(!imageUrl){
 
+            imageUrl = localStorage.getItem(
+                `${user.uid}-day-${day}`
+            );
+
+        }
+
+        if(!imageUrl){
+
             try{
 
                 const storageRef = ref(
@@ -225,7 +249,12 @@ async function loadAlbum(user){
 
                 imageUrl = await getDownloadURL(storageRef);
 
-                console.log(`✅ Día ${day} cargado desde Storage`);
+                localStorage.setItem(
+                    `${user.uid}-day-${day}`,
+                    imageUrl
+                );
+
+                console.log(`✅ Día ${day} recuperado desde Storage`);
 
             }catch(error){
 
@@ -244,6 +273,7 @@ async function loadAlbum(user){
             );
 
             slot.dataset.completed = "true";
+
             slot.classList.add("completed");
 
             completed++;
@@ -253,6 +283,8 @@ async function loadAlbum(user){
     }
 
     updateProgress();
+
+    applyDailyLocks();
 
 }
 
@@ -422,6 +454,10 @@ slots.forEach(slot => {
             await uploadBytes(storageRef, file);
 
             downloadURL = await getDownloadURL(storageRef);
+            localStorage.setItem(
+                `${user.uid}-day-${day}`,
+                downloadURL
+            );
 
             console.log(
                 `✅ Imagen del día ${day} subida a Storage:`,
