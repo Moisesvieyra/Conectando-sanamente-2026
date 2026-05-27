@@ -117,16 +117,12 @@ function updateProgress(){
 }
 
 /* ========================================= */
-/* LOAD ALBUM FROM FIRESTORE */
+/* LOAD ALBUM FROM FIRESTORE + STORAGE FALLBACK */
 /* ========================================= */
 
 async function loadAlbum(user){
 
     completed = 0;
-
-    const albumRef = doc(db, "albums", user.uid);
-
-    const albumSnap = await getDoc(albumRef);
 
     slots.forEach(slot => {
 
@@ -136,36 +132,75 @@ async function loadAlbum(user){
 
     });
 
-    if(albumSnap.exists()){
+    let firestoreData = {};
 
-        const data = albumSnap.data();
+    try{
 
-        slots.forEach(slot => {
+        const albumRef = doc(db, "albums", user.uid);
 
-            const day = slot.dataset.day;
+        const albumSnap = await getDoc(albumRef);
 
-            const imageUrl = data[`day${day}`];
+        if(albumSnap.exists()){
 
-            if(imageUrl){
+            firestoreData = albumSnap.data();
 
-                renderStickerImage(slot, imageUrl, false);
+        }
 
-                slot.dataset.completed = "true";
+    }catch(error){
 
-                slot.classList.add("completed");
+        console.warn(
+            "Firestore no respondió. Intentando cargar desde Storage:",
+            error
+        );
 
-                completed++;
+    }
+
+    for(const slot of slots){
+
+        const day = slot.dataset.day;
+
+        let imageUrl = firestoreData[`day${day}`];
+
+        if(!imageUrl){
+
+            try{
+
+                const storageRef = ref(
+                    storage,
+                    `usuarios/${user.uid}/dia-${day}.jpg`
+                );
+
+                imageUrl = await getDownloadURL(storageRef);
+
+            }catch(error){
+
+                imageUrl = null;
 
             }
 
-        });
+        }
+
+        if(imageUrl){
+
+            renderStickerImage(
+                slot,
+                imageUrl,
+                false
+            );
+
+            slot.dataset.completed = "true";
+
+            slot.classList.add("completed");
+
+            completed++;
+
+        }
 
     }
 
     updateProgress();
 
 }
-
 /* ========================================= */
 /* RENDER IMAGE IN CARD */
 /* ========================================= */
@@ -305,15 +340,26 @@ slots.forEach(slot => {
 
             const downloadURL = await getDownloadURL(storageRef);
 
-            await setDoc(
-                doc(db, "albums", user.uid),
-                {
-                    [`day${day}`]: downloadURL,
-                    email: user.email,
-                    updatedAt: Date.now()
-                },
-                { merge:true }
-            );
+ try{
+
+    await setDoc(
+        doc(db, "albums", user.uid),
+        {
+            [`day${day}`]: downloadURL,
+            email: user.email,
+            updatedAt: Date.now()
+        },
+        { merge:true }
+    );
+
+}catch(error){
+
+    console.warn(
+        "La imagen subió a Storage, pero Firestore no guardó la URL:",
+        error
+    );
+
+}
 
             renderStickerImage(slot, downloadURL, true);
 
