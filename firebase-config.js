@@ -26,12 +26,11 @@ import {
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-
-    getFirestore
-
+    initializeFirestore,
+    persistentLocalCache,
+    persistentSingleTabManager
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 import {
 
     getStorage
@@ -69,8 +68,15 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
-const db = getFirestore(app);
+const db = initializeFirestore(app, {
 
+    experimentalAutoDetectLongPolling: true,
+
+    localCache: persistentLocalCache({
+        tabManager: persistentSingleTabManager()
+    })
+
+});
 const storage = getStorage(app);
 
 /* =========================================================
