@@ -18,9 +18,10 @@ import {
 import {
     doc,
     setDoc,
-    getDoc
+    getDoc,
+    collection,
+    getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 console.log(`
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -46,6 +47,7 @@ const previewModal = document.getElementById("previewModal");
 const previewImage = document.getElementById("previewImage");
 const closePreview = document.querySelector(".close-preview");
 const userName = document.getElementById("user-name");
+const rankingButton = document.querySelector(".premium-btn");
 
 /* ========================================= */
 /* VARIABLES */
@@ -443,6 +445,236 @@ function renderStickerImage(slot, imageUrl, animate = true){
     });
 
 }
+
+/* ========================================= */
+/* RANKING SYSTEM */
+/* ========================================= */
+
+function countCompletedDays(data){
+
+    let count = 0;
+
+    for(let i = 1; i <= total; i++){
+
+        if(data[`day${i}`]){
+
+            count++;
+
+        }
+
+    }
+
+    return count;
+
+}
+
+function getUserLabel(data){
+
+    if(data.name){
+
+        return data.name;
+
+    }
+
+    if(data.email){
+
+        return data.email;
+
+    }
+
+    return "Participante Aguakan";
+
+}
+
+async function getRankingData(){
+
+    const albumsRef = collection(db, "albums");
+
+    const snapshot = await getDocs(albumsRef);
+
+    const ranking = [];
+
+    snapshot.forEach(docSnap => {
+
+        const data = docSnap.data();
+
+        const completedCount =
+        data.completedCount ?? countCompletedDays(data);
+
+        ranking.push({
+
+            uid: docSnap.id,
+            name: getUserLabel(data),
+            email: data.email || "",
+            completed: completedCount,
+            updatedAt: data.updatedAt || 0
+
+        });
+
+    });
+
+    ranking.sort((a,b) => {
+
+        if(b.completed !== a.completed){
+
+            return b.completed - a.completed;
+
+        }
+
+        return a.updatedAt - b.updatedAt;
+
+    });
+
+    return ranking;
+
+}
+
+function renderRankingModal(ranking){
+
+    const existingModal = document.querySelector(".ranking-modal");
+
+    if(existingModal){
+
+        existingModal.remove();
+
+    }
+
+    const modal = document.createElement("div");
+
+    modal.className = "ranking-modal";
+
+    const rankingItems = ranking.map((user,index) => {
+
+        const medal =
+        index === 0 ? "🥇" :
+        index === 1 ? "🥈" :
+        index === 2 ? "🥉" :
+        `#${index + 1}`;
+
+        const percent =
+        Math.round((user.completed / total) * 100);
+
+        return `
+            <div class="ranking-item">
+                <div class="ranking-position">${medal}</div>
+
+                <div class="ranking-user">
+                    <h3>${user.name}</h3>
+                    <p>${user.completed} de ${total} retos completados</p>
+
+                    <div class="ranking-progress">
+                        <span style="width:${percent}%"></span>
+                    </div>
+                </div>
+
+                <div class="ranking-score">
+                    ${percent}%
+                </div>
+            </div>
+        `;
+
+    }).join("");
+
+    modal.innerHTML = `
+        <div class="ranking-content">
+
+            <button class="ranking-close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="ranking-header">
+                <span>🏆 Ranking General</span>
+                <h2>Álbum de Bienestar</h2>
+                <p>Participantes con más retos completados</p>
+            </div>
+
+            <div class="ranking-list">
+                ${
+                    ranking.length > 0
+                    ? rankingItems
+                    : `<div class="ranking-empty">Aún no hay participantes en el ranking.</div>`
+                }
+            </div>
+
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    setTimeout(() => {
+
+        modal.classList.add("show");
+
+    },50);
+
+    modal.querySelector(".ranking-close").addEventListener("click", () => {
+
+        modal.classList.remove("show");
+
+        setTimeout(() => {
+
+            modal.remove();
+
+        },300);
+
+    });
+
+    modal.addEventListener("click", (e) => {
+
+        if(e.target === modal){
+
+            modal.classList.remove("show");
+
+            setTimeout(() => {
+
+                modal.remove();
+
+            },300);
+
+        }
+
+    });
+
+}
+
+async function openRanking(){
+
+    try{
+
+        if(rankingButton){
+
+            rankingButton.innerHTML = `
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                Cargando...
+            `;
+
+        }
+
+        const ranking = await getRankingData();
+
+        renderRankingModal(ranking);
+
+    }catch(error){
+
+        console.error("Error cargando ranking:", error);
+
+        alert("No se pudo cargar el ranking. Revisa permisos de Firestore.");
+
+    }finally{
+
+        if(rankingButton){
+
+            rankingButton.innerHTML = `
+                <i class="fa-solid fa-ranking-star"></i>
+                Ver Ranking
+            `;
+
+        }
+
+    }
+
+}
+
 /* ========================================= */
 /* SLOT SYSTEM */
 /* ========================================= */
@@ -606,11 +838,12 @@ slots.forEach(slot => {
 
             await setDoc(
                 doc(db, "albums", user.uid),
-                {
-                    [`day${day}`]: downloadURL,
-                    email:user.email,
-                    updatedAt:Date.now()
-                },
+               {
+    [`day${day}`]: downloadURL,
+    email:user.email,
+    completedCount: completed,
+    updatedAt:Date.now()
+},
                 { merge:true }
             );
 
@@ -929,6 +1162,22 @@ style.innerHTML = `
 `;
 
 document.head.appendChild(style);
+
+/* ========================================= */
+/* RANKING BUTTON */
+/* ========================================= */
+
+if(rankingButton){
+
+    rankingButton.addEventListener("click", (e) => {
+
+        e.stopPropagation();
+
+        openRanking();
+
+    });
+
+}
 
 /* ========================================= */
 /* INIT */
