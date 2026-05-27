@@ -1,6 +1,6 @@
 /* =========================================================
    FIREBASE ENGINE • CONECTANDO SANAMENTE 2026
-   AGUAKAN ENTERPRISE PREMIUM SYSTEM V2
+   AGUAKAN ENTERPRISE PREMIUM SYSTEM V3
 ========================================================= */
 
 /* =========================================================
@@ -26,11 +26,12 @@ import {
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-    initializeFirestore,
-    persistentLocalCache,
-    persistentSingleTabManager
+
+    initializeFirestore
+
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 import {
 
     getStorage
@@ -68,15 +69,21 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
+/*
+   IMPORTANTE:
+   Quitamos persistentLocalCache para evitar que Firestore
+   trabaje con datos locales y no escriba/lea correctamente
+   desde la base real.
+*/
+
 const db = initializeFirestore(app, {
 
-    experimentalAutoDetectLongPolling: true,
+    experimentalForceLongPolling: true,
 
-    localCache: persistentLocalCache({
-        tabManager: persistentSingleTabManager()
-    })
+    useFetchStreams: false
 
 });
+
 const storage = getStorage(app);
 
 /* =========================================================
@@ -95,7 +102,7 @@ console.log(`
 [STORAGE]         : ACTIVE
 [SECURITY]        : ENABLED
 [PROJECT]         : conectando-sanamente
-[VERSION]         : ENTERPRISE PREMIUM V2
+[VERSION]         : ENTERPRISE PREMIUM V3 NO CACHE
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -115,6 +122,7 @@ window.registerUser = async(email,password)=>{
         );
 
         return;
+
     }
 
     try{
@@ -149,7 +157,7 @@ window.registerUser = async(email,password)=>{
 
     }
 
-}
+};
 
 /* =========================================================
    LOGIN USER
@@ -165,6 +173,7 @@ window.loginUser = async(email,password)=>{
         );
 
         return;
+
     }
 
     try{
@@ -205,7 +214,7 @@ window.loginUser = async(email,password)=>{
 
     }
 
-}
+};
 
 /* =========================================================
    AUTH STATE
@@ -266,7 +275,7 @@ window.logoutUser = async()=>{
 
     }
 
-}
+};
 
 /* =========================================================
    ALERT SYSTEM
@@ -366,6 +375,7 @@ function translateFirebaseError(code){
 
         default:
             return "Error inesperado";
+
     }
 
 }
