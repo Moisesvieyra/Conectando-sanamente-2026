@@ -192,12 +192,48 @@ async function loadAlbum(user){
     slots.forEach(slot => {
 
         slot.dataset.completed = "";
-
         slot.classList.remove("completed");
-
         slot.classList.remove("locked");
 
     });
+
+    const completedDays = new Set();
+
+    /* ========================================= */
+    /* 1. CARGA RÁPIDA DESDE LOCALSTORAGE */
+    /* ========================================= */
+
+    slots.forEach(slot => {
+
+        const day = slot.dataset.day;
+
+        const localImage = localStorage.getItem(
+            `${user.uid}-day-${day}`
+        );
+
+        if(localImage){
+
+            renderStickerImage(
+                slot,
+                localImage,
+                false
+            );
+
+            completedDays.add(day);
+
+        }
+
+    });
+
+    completed = completedDays.size;
+
+    updateProgress();
+
+    applyDailyLocks();
+
+    /* ========================================= */
+    /* 2. CARGA DESDE FIRESTORE */
+    /* ========================================= */
 
     let firestoreData = {};
 
@@ -218,27 +254,54 @@ async function loadAlbum(user){
     }catch(error){
 
         console.warn(
-            "⚠️ Firestore no respondió. Se usará localStorage y Storage.",
+            "⚠️ Firestore no respondió. Se intentará cargar desde Storage.",
             error
         );
 
     }
 
-    for(const slot of slots){
+    slots.forEach(slot => {
 
         const day = slot.dataset.day;
 
-        let imageUrl = firestoreData[`day${day}`];
+        const imageUrl = firestoreData[`day${day}`];
 
-        if(!imageUrl){
+        if(imageUrl){
 
-            imageUrl = localStorage.getItem(
-                `${user.uid}-day-${day}`
+            localStorage.setItem(
+                `${user.uid}-day-${day}`,
+                imageUrl
             );
+
+            renderStickerImage(
+                slot,
+                imageUrl,
+                false
+            );
+
+            completedDays.add(day);
 
         }
 
-        if(!imageUrl){
+    });
+
+    completed = completedDays.size;
+
+    updateProgress();
+
+    applyDailyLocks();
+
+    /* ========================================= */
+    /* 3. RESPALDO DESDE STORAGE */
+    /* ========================================= */
+
+    await Promise.all(
+
+        Array.from(slots).map(async(slot) => {
+
+            const day = slot.dataset.day;
+
+            if(completedDays.has(day)) return;
 
             try{
 
@@ -247,47 +310,40 @@ async function loadAlbum(user){
                     `usuarios/${user.uid}/dia-${day}.jpg`
                 );
 
-                imageUrl = await getDownloadURL(storageRef);
+                const imageUrl = await getDownloadURL(storageRef);
 
                 localStorage.setItem(
                     `${user.uid}-day-${day}`,
                     imageUrl
                 );
 
-                console.log(`✅ Día ${day} recuperado desde Storage`);
+                renderStickerImage(
+                    slot,
+                    imageUrl,
+                    false
+                );
+
+                completedDays.add(day);
 
             }catch(error){
 
-                imageUrl = null;
+                // No pasa nada si ese día todavía no tiene imagen.
 
             }
 
-        }
+        })
 
-        if(imageUrl){
+    );
 
-            renderStickerImage(
-                slot,
-                imageUrl,
-                false
-            );
-
-            slot.dataset.completed = "true";
-
-            slot.classList.add("completed");
-
-            completed++;
-
-        }
-
-    }
+    completed = completedDays.size;
 
     updateProgress();
 
     applyDailyLocks();
 
-}
+    console.log(`✅ Álbum listo: ${completed} de ${total} retos cargados`);
 
+}
 /* ========================================= */
 /* RENDER IMAGE IN CARD */
 /* ========================================= */
@@ -298,30 +354,46 @@ function renderStickerImage(slot, imageUrl, animate = true){
 
     if(!image || !imageUrl) return;
 
+    image.classList.add("uploaded-image");
+
+    image.style.display = "block";
+    image.style.visibility = "visible";
+    image.style.opacity = "1";
+
+    slot.dataset.completed = "true";
+    slot.classList.add("completed");
+    slot.classList.remove("locked");
+
+    if(animate){
+
+        image.style.transition = "none";
+        image.style.opacity = "0";
+        image.style.transform = `
+            scale(2.2)
+            rotate(-18deg)
+            translateY(-150px)
+        `;
+        image.style.filter = `
+            blur(18px)
+            brightness(2)
+            saturate(1.7)
+        `;
+
+    }else{
+
+        image.style.transition = "none";
+        image.style.opacity = "1";
+        image.style.transform = "scale(1)";
+        image.style.filter = "none";
+
+    }
+
     image.onload = () => {
 
         image.style.display = "block";
         image.style.visibility = "visible";
-        image.classList.add("uploaded-image");
-
-        slot.classList.add("completed");
 
         if(animate){
-
-            image.style.transition = "none";
-            image.style.opacity = "0";
-
-            image.style.transform = `
-                scale(2.2)
-                rotate(-18deg)
-                translateY(-150px)
-            `;
-
-            image.style.filter = `
-                blur(18px)
-                brightness(2)
-                saturate(1.7)
-            `;
 
             setTimeout(() => {
 
@@ -330,13 +402,11 @@ function renderStickerImage(slot, imageUrl, animate = true){
                 `;
 
                 image.style.opacity = "1";
-
                 image.style.transform = `
                     scale(1)
                     rotate(0deg)
                     translateY(0)
                 `;
-
                 image.style.filter = `
                     blur(0px)
                     brightness(1)
@@ -357,17 +427,22 @@ function renderStickerImage(slot, imageUrl, animate = true){
 
     image.onerror = () => {
 
-        console.error(
-            "❌ No se pudo cargar la imagen:",
-            imageUrl
-        );
+        console.error("❌ No se pudo cargar la imagen:", imageUrl);
 
     };
 
     image.src = imageUrl;
 
-}
+    /* Forzar repintado por si el navegador tarda */
+    requestAnimationFrame(() => {
 
+        image.style.opacity = "1";
+        image.style.visibility = "visible";
+        image.style.display = "block";
+
+    });
+
+}
 /* ========================================= */
 /* SLOT SYSTEM */
 /* ========================================= */
@@ -454,9 +529,10 @@ slots.forEach(slot => {
             await uploadBytes(storageRef, file);
 
             downloadURL = await getDownloadURL(storageRef);
+
             localStorage.setItem(
-                `${user.uid}-day-${day}`,
-                downloadURL
+            `${user.uid}-day-${day}`,
+            downloadURL
             );
 
             console.log(
