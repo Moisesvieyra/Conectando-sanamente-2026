@@ -1,5 +1,5 @@
 /* ========================================= */
-/* AGUAKAN ALBUM ENGINE V4 */
+/* AGUAKAN ALBUM ENGINE V5 */
 /* CONECTANDO SANAMENTE 2026 */
 /* ========================================= */
 
@@ -19,8 +19,11 @@ import {
 import {
     doc,
     setDoc,
-    getDoc
+    getDoc,
+    collection,
+    getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 console.log(`
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -29,7 +32,7 @@ STATUS   : ONLINE
 MODE     : PREMIUM EXPERIENCE
 STORAGE  : CONNECTED
 DATABASE : CONNECTED
-VERSION  : V5 DAILY LOCKS
+VERSION  : V5.6 DAILY LOCKS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 `);
@@ -348,11 +351,12 @@ applyDailyLocks();
 
 try{
 
-    const albumUpdate = {
-        email:user.email,
-        completedCount:completed,
-        updatedAt:Date.now()
-    };
+const albumUpdate = {
+    email:user.email,
+    name:user.email.split("@")[0],
+    completedCount:completed,
+    updatedAt:Date.now()
+};
 
     slots.forEach(slot => {
 
@@ -530,67 +534,32 @@ function getUserLabel(data){
 
 async function getRankingData(){
 
-    const user = auth.currentUser;
+    const albumsRef = collection(db, "albums");
 
-    if(!user){
+    const snapshot = await getDocs(albumsRef);
 
-        throw new Error("No hay usuario autenticado.");
+    const ranking = [];
 
-    }
+    snapshot.forEach(docSnap => {
 
-    const token = await user.getIdToken();
+        const data = docSnap.data();
 
-    const projectId = "conectando-sanamente";
+        const completedCount =
+        data.completedCount ?? countCompletedDays(data);
 
-    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/albums`;
+        if(completedCount <= 0) return;
 
-    const response = await fetch(url, {
-        method:"GET",
-        headers:{
-            Authorization:`Bearer ${token}`
-        }
+        ranking.push({
+
+            uid: docSnap.id,
+            name: getUserLabel(data),
+            email: data.email || "",
+            completed: completedCount,
+            updatedAt: data.updatedAt || 0
+
+        });
+
     });
-
-    if(!response.ok){
-
-        const errorText = await response.text();
-
-        throw new Error(`Error REST Firestore: ${response.status} ${errorText}`);
-
-    }
-
-    const result = await response.json();
-
-    const documents = result.documents || [];
-
-    const ranking = documents.map(docItem => {
-
-        const fields = docItem.fields || {};
-
-        const uid = docItem.name.split("/").pop();
-
-        const email = fields.email?.stringValue || "";
-
-        const name =
-        fields.name?.stringValue ||
-        email ||
-        "Participante Aguakan";
-
-        const completed =
-        Number(fields.completedCount?.integerValue || 0);
-
-        const updatedAt =
-        Number(fields.updatedAt?.integerValue || 0);
-
-        return {
-            uid,
-            name,
-            email,
-            completed,
-            updatedAt
-        };
-
-    }).filter(user => user.completed > 0);
 
     ranking.sort((a,b) => {
 
@@ -604,7 +573,7 @@ async function getRankingData(){
 
     });
 
-    console.log("✅ Ranking cargado desde Firestore REST:", ranking);
+    console.log("✅ Ranking cargado desde Firestore SDK:", ranking);
 
     return ranking;
 
@@ -920,11 +889,13 @@ slots.forEach(slot => {
             await setDoc(
                 doc(db, "albums", user.uid),
                {
+{
     [`day${day}`]: downloadURL,
     email:user.email,
+    name:user.email.split("@")[0],
     completedCount: completed,
     updatedAt:Date.now()
-},
+}
                 { merge:true }
             );
 
