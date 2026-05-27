@@ -1,13 +1,13 @@
 /* =========================================================
    FIREBASE ENGINE • CONECTANDO SANAMENTE 2026
-   AGUAKAN ENTERPRISE AUTH SYSTEM
+   AGUAKAN ENTERPRISE PREMIUM SYSTEM V2
 ========================================================= */
 
 /* =========================================================
    IMPORT FIREBASE MODULES
 ========================================================= */
 
-import { initializeApp } 
+import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
@@ -24,6 +24,20 @@ import {
 
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+
+    getFirestore
+
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+
+    getStorage
+
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 /* =========================================================
    FIREBASE CONFIG
@@ -55,6 +69,10 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
+const db = getFirestore(app);
+
+const storage = getStorage(app);
+
 /* =========================================================
    AGUAKAN ENGINE CONSOLE
 ========================================================= */
@@ -62,15 +80,16 @@ const auth = getAuth(app);
 console.log(`
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- FIREBASE AUTH SYSTEM • AGUAKAN ENTERPRISE V1.0
+ FIREBASE PREMIUM SYSTEM • CONECTANDO SANAMENTE 2026
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[STATUS]        : CONNECTED
-[AUTH SYSTEM]   : ONLINE
-[DATABASE]      : ACTIVE
-[SECURITY]      : ENABLED
-[PROJECT]       : conectando-sanamente
-[VERSION]       : PREMIUM ENTERPRISE
+[STATUS]          : CONNECTED
+[AUTH SYSTEM]     : ONLINE
+[FIRESTORE]       : CONNECTED
+[STORAGE]         : ACTIVE
+[SECURITY]        : ENABLED
+[PROJECT]         : conectando-sanamente
+[VERSION]         : ENTERPRISE PREMIUM V2
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -213,12 +232,33 @@ onAuthStateChanged(auth,(user)=>{
 
 window.logoutUser = async()=>{
 
-    await signOut(auth);
+    try{
 
-    showAlert(
-        "Sesión cerrada",
-        "#0b5aa7"
-    );
+        await signOut(auth);
+
+        showAlert(
+            "Sesión cerrada",
+            "#0b5aa7"
+        );
+
+        setTimeout(()=>{
+
+            window.location.href = "login.html";
+
+        },1000);
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        showAlert(
+            "Error cerrando sesión",
+            "#ff5c5c"
+        );
+
+    }
 
 }
 
@@ -246,10 +286,10 @@ function showAlert(message,color){
 
     alert.style.fontWeight = "700";
 
-    alert.style.borderRadius = "16px";
+    alert.style.borderRadius = "18px";
 
     alert.style.boxShadow =
-    "0 15px 35px rgba(0,0,0,.2)";
+    "0 20px 45px rgba(0,0,0,.25)";
 
     alert.style.zIndex = "99999";
 
@@ -257,9 +297,12 @@ function showAlert(message,color){
 
     alert.style.opacity = "0";
 
-    alert.style.transform = "translateY(-20px)";
+    alert.style.transform =
+    "translateY(-20px) scale(.95)";
 
     alert.style.transition = ".4s ease";
+
+    alert.style.backdropFilter = "blur(10px)";
 
     document.body.appendChild(alert);
 
@@ -268,7 +311,7 @@ function showAlert(message,color){
         alert.style.opacity = "1";
 
         alert.style.transform =
-        "translateY(0)";
+        "translateY(0) scale(1)";
 
     },100);
 
@@ -277,7 +320,7 @@ function showAlert(message,color){
         alert.style.opacity = "0";
 
         alert.style.transform =
-        "translateY(-20px)";
+        "translateY(-20px) scale(.95)";
 
         setTimeout(()=>{
 
@@ -312,8 +355,17 @@ function translateFirebaseError(code){
         case "auth/user-not-found":
             return "Usuario no encontrado";
 
+        case "auth/network-request-failed":
+            return "Error de conexión";
+
         default:
             return "Error inesperado";
     }
 
 }
+
+/* =========================================================
+   EXPORTS
+========================================================= */
+
+export { auth, db, storage };
