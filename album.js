@@ -21,7 +21,7 @@ import {
     setDoc,
     getDoc,
     collection,
-    getDocs
+    getDocsFromServer
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 console.log(`
 
@@ -338,13 +338,56 @@ async function loadAlbum(user){
 
     );
 
-    completed = completedDays.size;
+completed = completedDays.size;
 
-    updateProgress();
+updateProgress();
 
-    applyDailyLocks();
+applyDailyLocks();
 
-    console.log(`✅ Álbum listo: ${completed} de ${total} retos cargados`);
+/* ========================================= */
+/* 4. SINCRONIZAR PROGRESO CON FIRESTORE */
+/* ========================================= */
+
+try{
+
+    const albumUpdate = {
+        email:user.email,
+        completedCount:completed,
+        updatedAt:Date.now()
+    };
+
+    slots.forEach(slot => {
+
+        const day = slot.dataset.day;
+
+        const image = slot.querySelector(".slot-image img");
+
+        if(slot.dataset.completed === "true" && image && image.src){
+
+            albumUpdate[`day${day}`] = image.src;
+
+        }
+
+    });
+
+    await setDoc(
+        doc(db, "albums", user.uid),
+        albumUpdate,
+        { merge:true }
+    );
+
+    console.log("✅ Progreso sincronizado con Firestore");
+
+}catch(error){
+
+    console.warn(
+        "⚠️ No se pudo sincronizar progreso con Firestore:",
+        error
+    );
+
+}
+
+console.log(`✅ Álbum listo: ${completed} de ${total} retos cargados`);
 
 }
 /* ========================================= */
@@ -491,7 +534,7 @@ async function getRankingData(){
 
     const albumsRef = collection(db, "albums");
 
-    const snapshot = await getDocs(albumsRef);
+    const snapshot = await getDocsFromServer(albumsRef);
 
     const ranking = [];
 
