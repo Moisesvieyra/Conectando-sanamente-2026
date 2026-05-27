@@ -889,7 +889,6 @@ slots.forEach(slot => {
             await setDoc(
                 doc(db, "albums", user.uid),
                {
-{
     [`day${day}`]: downloadURL,
     email:user.email,
     name:user.email.split("@")[0],
