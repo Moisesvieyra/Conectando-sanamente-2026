@@ -59,7 +59,7 @@ const userName = document.getElementById("user-name");
 /* ========================================= */
 
 /* Cambia esta fecha al día real en que inicia el reto */
-const challengeStartDate = new Date("2026-06-17T00:00:00");
+const challengeStartDate = new Date("2026-05-27T00:00:00");
 
 function getCurrentChallengeDay(){
 
