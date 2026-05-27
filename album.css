@@ -1491,3 +1491,45 @@ body{
     }
 
 }
+
+/* ========================================= */
+/* LOCKED DAYS */
+/* ========================================= */
+
+.album-slot.locked{
+
+    opacity:.45;
+    filter:grayscale(1);
+    cursor:not-allowed;
+    position:relative;
+
+}
+
+.album-slot.locked::before{
+
+    content:"🔒 BLOQUEADO";
+
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:rgba(0,45,90,.72);
+    color:white;
+
+    font-size:.9rem;
+    font-weight:900;
+    letter-spacing:1px;
+
+    z-index:20;
+
+}
+
+.album-slot.locked:hover{
+
+    transform:none;
+    box-shadow:none;
+
+}
