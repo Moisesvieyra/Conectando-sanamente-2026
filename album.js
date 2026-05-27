@@ -31,7 +31,7 @@ STATUS   : ONLINE
 MODE     : PREMIUM EXPERIENCE
 STORAGE  : CONNECTED
 DATABASE : CONNECTED
-VERSION  : V4 DAILY LOCKS
+VERSION  : V5 DAILY LOCKS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 `);
