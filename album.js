@@ -795,13 +795,15 @@ slots.forEach(slot => {
 
         let downloadURL = null;
 
-        /* ========================================= */
-        /* 1. SUBIR A STORAGE */
-        /* ========================================= */
-
         try{
 
             slot.classList.add("uploading");
+
+            console.log(`⏳ Iniciando subida del día ${day}...`);
+
+            /* ========================================= */
+            /* 1. SUBIR A STORAGE */
+            /* ========================================= */
 
             const storageRef = ref(
                 storage,
@@ -813,8 +815,8 @@ slots.forEach(slot => {
             downloadURL = await getDownloadURL(storageRef);
 
             localStorage.setItem(
-            `${user.uid}-day-${day}`,
-            downloadURL
+                `${user.uid}-day-${day}`,
+                downloadURL
             );
 
             console.log(
@@ -822,27 +824,72 @@ slots.forEach(slot => {
                 downloadURL
             );
 
-        }catch(error){
+            /* ========================================= */
+            /* 2. ACTUALIZAR PROGRESO LOCAL */
+            /* ========================================= */
 
-            console.error("❌ Error en Storage:", error);
+            if(!wasCompleted){
 
-            alert(
-                `Error subiendo imagen a Storage: ${error.code || error.message}`
+                completed++;
+
+            }
+
+            slot.dataset.completed = "true";
+
+            updateProgress();
+
+            applyDailyLocks();
+
+            /* ========================================= */
+            /* 3. GUARDAR EN FIRESTORE */
+            /* ========================================= */
+
+            console.log(`⏳ Guardando día ${day} en Firestore...`);
+
+            const albumRef = doc(db, "albums", user.uid);
+
+            const albumData = {
+                [`day${day}`]: downloadURL,
+                email:user.email,
+                name:user.email.split("@")[0],
+                completedCount:completed,
+                updatedAt:Date.now()
+            };
+
+            await setDoc(
+                albumRef,
+                albumData,
+                { merge:true }
             );
 
-            slot.classList.remove("uploading");
+            console.log(
+                `✅ URL del día ${day} guardada en Firestore`
+            );
 
-            input.value = "";
+            /* ========================================= */
+            /* 4. VERIFICAR QUE FIRESTORE RESPONDIÓ */
+            /* ========================================= */
 
-            return;
+            const verifySnap = await getDoc(albumRef);
 
-        }
+            if(verifySnap.exists()){
 
-        /* ========================================= */
-        /* 2. MOSTRAR IMAGEN EN PANTALLA */
-        /* ========================================= */
+                console.log(
+                    "✅ Documento confirmado en Firestore:",
+                    verifySnap.data()
+                );
 
-        try{
+            }else{
+
+                console.warn(
+                    "⚠️ Firestore no confirmó el documento albums del usuario."
+                );
+
+            }
+
+            /* ========================================= */
+            /* 5. MOSTRAR IMAGEN EN PANTALLA */
+            /* ========================================= */
 
             renderStickerImage(
                 slot,
@@ -860,57 +907,16 @@ slots.forEach(slot => {
 
             playPop();
 
-            if(!wasCompleted){
-                completed++;
-            }
-
-            slot.dataset.completed = "true";
-
-            updateProgress();
-
             console.log(
                 `✅ Imagen del día ${day} pintada en el álbum`
             );
 
         }catch(error){
 
-            console.error("❌ Error visual:", error);
-
-            alert("La imagen subió, pero hubo un error visual.");
-
-        }
-
-        /* ========================================= */
-        /* 3. GUARDAR URL EN FIRESTORE */
-        /* ========================================= */
-
-        try{
-
-            await setDoc(
-                doc(db, "albums", user.uid),
-               {
-    [`day${day}`]: downloadURL,
-    email:user.email,
-    name:user.email.split("@")[0],
-    completedCount: completed,
-    updatedAt:Date.now()
-},
-                { merge:true }
-            );
-
-            console.log(
-                `✅ URL del día ${day} guardada en Firestore`
-            );
-
-        }catch(error){
-
-            console.warn(
-                "⚠️ La imagen subió a Storage, pero Firestore no guardó la URL:",
-                error
-            );
+            console.error("❌ Error completo al subir/guardar imagen:", error);
 
             alert(
-                `La imagen subió, pero Firestore falló: ${error.code || error.message}`
+                `Error guardando la imagen: ${error.code || error.message}`
             );
 
         }finally{
