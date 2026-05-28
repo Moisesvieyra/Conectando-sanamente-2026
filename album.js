@@ -1,14 +1,14 @@
 /* ========================================= */
-/* AGUAKAN ALBUM ENGINE V5 */
+/* AGUAKAN ALBUM ENGINE V7 */
 /* CONECTANDO SANAMENTE 2026 */
+/* STORAGE + REALTIME RANKING */
 /* ========================================= */
 
-import { auth, db, storage } from "./firebase-config.js";
+import { auth, storage, realtimeDB } from "./firebase-config.js";
 
 import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
 
 import {
     ref,
@@ -17,12 +17,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 import {
-    doc,
-    setDoc,
-    getDoc,
-    collection,
-    getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    ref as realtimeRef,
+    update as realtimeUpdate,
+    get as realtimeGet,
+    onValue
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 console.log(`
 
@@ -31,8 +30,8 @@ ALBUM ENGINE • CONECTANDO SANAMENTE 2026
 STATUS   : ONLINE
 MODE     : PREMIUM EXPERIENCE
 STORAGE  : CONNECTED
-DATABASE : CONNECTED
-VERSION  : V5.6 DAILY LOCKS
+RANKING  : REALTIME DATABASE
+VERSION  : V7 REALTIME RANKING
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 `);
@@ -57,6 +56,7 @@ const rankingButton = document.querySelector(".premium-btn");
 
 let completed = 0;
 const total = 21;
+let rankingUnsubscribe = null;
 
 /* ========================================= */
 /* DAILY LOCK CONFIG */
@@ -136,6 +136,7 @@ function applyDailyLocks(){
     });
 
 }
+
 /* ========================================= */
 /* AUTH STATE */
 /* ========================================= */
@@ -186,7 +187,7 @@ function updateProgress(){
 }
 
 /* ========================================= */
-/* LOAD ALBUM FROM FIRESTORE + STORAGE */
+/* LOAD ALBUM FROM LOCAL + REALTIME + STORAGE */
 /* ========================================= */
 
 async function loadAlbum(user){
@@ -236,58 +237,65 @@ async function loadAlbum(user){
     applyDailyLocks();
 
     /* ========================================= */
-    /* 2. CARGA DESDE FIRESTORE */
+    /* 2. CARGAR DESDE REALTIME DATABASE */
     /* ========================================= */
-
-    let firestoreData = {};
 
     try{
 
-        const albumRef = doc(db, "albums", user.uid);
+        const userRankingRef = realtimeRef(
+            realtimeDB,
+            `ranking/${user.uid}`
+        );
 
-        const albumSnap = await getDoc(albumRef);
+        const snapshot = await realtimeGet(userRankingRef);
 
-        if(albumSnap.exists()){
+        if(snapshot.exists()){
 
-            firestoreData = albumSnap.data();
+            const data = snapshot.val();
 
-            console.log("✅ Álbum cargado desde Firestore");
+            if(data.days){
+
+                Object.entries(data.days).forEach(([dayKey,imageUrl]) => {
+
+                    const day = dayKey.replace("day","");
+
+                    const slot = document.querySelector(
+                        `.album-slot[data-day="${day}"]`
+                    );
+
+                    if(slot && imageUrl){
+
+                        localStorage.setItem(
+                            `${user.uid}-day-${day}`,
+                            imageUrl
+                        );
+
+                        renderStickerImage(
+                            slot,
+                            imageUrl,
+                            false
+                        );
+
+                        completedDays.add(day);
+
+                    }
+
+                });
+
+            }
+
+            console.log("✅ Álbum cargado desde Realtime Database");
 
         }
 
     }catch(error){
 
         console.warn(
-            "⚠️ Firestore no respondió. Se intentará cargar desde Storage.",
+            "⚠️ No se pudo cargar desde Realtime Database. Se usará Storage/local:",
             error
         );
 
     }
-
-    slots.forEach(slot => {
-
-        const day = slot.dataset.day;
-
-        const imageUrl = firestoreData[`day${day}`];
-
-        if(imageUrl){
-
-            localStorage.setItem(
-                `${user.uid}-day-${day}`,
-                imageUrl
-            );
-
-            renderStickerImage(
-                slot,
-                imageUrl,
-                false
-            );
-
-            completedDays.add(day);
-
-        }
-
-    });
 
     completed = completedDays.size;
 
@@ -297,6 +305,7 @@ async function loadAlbum(user){
 
     /* ========================================= */
     /* 3. RESPALDO DESDE STORAGE */
+    /* Solo revisa días desbloqueados para evitar tantos 404
     /* ========================================= */
 
     await Promise.all(
@@ -306,6 +315,8 @@ async function loadAlbum(user){
             const day = slot.dataset.day;
 
             if(completedDays.has(day)) return;
+
+            if(!isDayUnlocked(day)) return;
 
             try{
 
@@ -331,7 +342,7 @@ async function loadAlbum(user){
 
             }catch(error){
 
-                // No pasa nada si ese día todavía no tiene imagen.
+                // Normal: ese día todavía no tiene imagen.
 
             }
 
@@ -339,59 +350,35 @@ async function loadAlbum(user){
 
     );
 
-completed = completedDays.size;
+    completed = completedDays.size;
 
-updateProgress();
+    updateProgress();
 
-applyDailyLocks();
+    applyDailyLocks();
 
-/* ========================================= */
-/* 4. SINCRONIZAR PROGRESO CON FIRESTORE */
-/* ========================================= */
+    /* ========================================= */
+    /* 4. SINCRONIZAR RANKING EN REALTIME */
+    /* ========================================= */
 
-try{
+    try{
 
-const albumUpdate = {
-    email:user.email,
-    name:user.email.split("@")[0],
-    completedCount:completed,
-    updatedAt:Date.now()
-};
+        await saveFullRankingRealtime(user);
 
-    slots.forEach(slot => {
+        console.log("✅ Progreso sincronizado con Realtime Database");
 
-        const day = slot.dataset.day;
+    }catch(error){
 
-        const image = slot.querySelector(".slot-image img");
+        console.warn(
+            "⚠️ No se pudo sincronizar progreso con Realtime Database:",
+            error
+        );
 
-        if(slot.dataset.completed === "true" && image && image.src){
+    }
 
-            albumUpdate[`day${day}`] = image.src;
-
-        }
-
-    });
-
-    await setDoc(
-        doc(db, "albums", user.uid),
-        albumUpdate,
-        { merge:true }
-    );
-
-    console.log("✅ Progreso sincronizado con Firestore");
-
-}catch(error){
-
-    console.warn(
-        "⚠️ No se pudo sincronizar progreso con Firestore:",
-        error
-    );
+    console.log(`✅ Álbum listo: ${completed} de ${total} retos cargados`);
 
 }
 
-console.log(`✅ Álbum listo: ${completed} de ${total} retos cargados`);
-
-}
 /* ========================================= */
 /* RENDER IMAGE IN CARD */
 /* ========================================= */
@@ -481,7 +468,6 @@ function renderStickerImage(slot, imageUrl, animate = true){
 
     image.src = imageUrl;
 
-    /* Forzar repintado por si el navegador tarda */
     requestAnimationFrame(() => {
 
         image.style.opacity = "1";
@@ -493,89 +479,163 @@ function renderStickerImage(slot, imageUrl, animate = true){
 }
 
 /* ========================================= */
-/* RANKING SYSTEM */
+/* REALTIME DATABASE SAVE */
 /* ========================================= */
 
-function countCompletedDays(data){
+function getCompletedDaysData(){
 
+    const days = {};
     let count = 0;
 
-    for(let i = 1; i <= total; i++){
+    slots.forEach(slot => {
 
-        if(data[`day${i}`]){
+        const day = slot.dataset.day;
+        const image = slot.querySelector(".slot-image img");
 
+        if(slot.dataset.completed === "true" && image && image.src){
+
+            days[`day${day}`] = image.src;
             count++;
 
         }
 
-    }
+    });
 
-    return count;
-
-}
-
-function getUserLabel(data){
-
-    if(data.name){
-
-        return data.name;
-
-    }
-
-    if(data.email){
-
-        return data.email;
-
-    }
-
-    return "Participante Aguakan";
+    return {
+        days,
+        count
+    };
 
 }
 
-async function getRankingData(){
+async function saveFullRankingRealtime(user){
 
-    const albumsRef = collection(db, "albums");
+    const progress = getCompletedDaysData();
 
-    const snapshot = await getDocs(albumsRef);
+    completed = progress.count;
 
-    const ranking = [];
+    updateProgress();
 
-    snapshot.forEach(docSnap => {
+    const rankingRef = realtimeRef(
+        realtimeDB,
+        `ranking/${user.uid}`
+    );
 
-        const data = docSnap.data();
+    await realtimeUpdate(rankingRef, {
+        email:user.email,
+        name:user.email.split("@")[0],
+        completedCount:progress.count,
+        updatedAt:Date.now(),
+        days:progress.days
+    });
 
-        const completedCount =
-        data.completedCount ?? countCompletedDays(data);
+}
 
-        if(completedCount <= 0) return;
+async function saveDayRankingRealtime(user, day, imageUrl){
 
-        ranking.push({
+    const progress = getCompletedDaysData();
 
-            uid: docSnap.id,
-            name: getUserLabel(data),
-            email: data.email || "",
-            completed: completedCount,
-            updatedAt: data.updatedAt || 0
+    const rankingRef = realtimeRef(
+        realtimeDB,
+        `ranking/${user.uid}`
+    );
+
+    await realtimeUpdate(rankingRef, {
+        email:user.email,
+        name:user.email.split("@")[0],
+        completedCount:progress.count,
+        updatedAt:Date.now(),
+        [`days/day${day}`]:imageUrl
+    });
+
+    console.log(
+        `✅ Ranking actualizado en Realtime Database: día ${day}`
+    );
+
+}
+
+/* ========================================= */
+/* RANKING SYSTEM - REALTIME */
+/* ========================================= */
+
+function listenRankingRealtime(callback){
+
+    const rankingRef = realtimeRef(
+        realtimeDB,
+        "ranking"
+    );
+
+    return onValue(rankingRef, (snapshot) => {
+
+        const data = snapshot.val() || {};
+
+        const ranking = Object.entries(data).map(([uid,user]) => {
+
+            return {
+                uid,
+                name:user.name || user.email || "Participante Aguakan",
+                email:user.email || "",
+                completed:Number(user.completedCount || 0),
+                updatedAt:Number(user.updatedAt || 0)
+            };
+
+        }).filter(user => user.completed > 0);
+
+        ranking.sort((a,b) => {
+
+            if(b.completed !== a.completed){
+
+                return b.completed - a.completed;
+
+            }
+
+            return a.updatedAt - b.updatedAt;
 
         });
 
+        console.log(
+            "✅ Ranking cargado en tiempo real:",
+            ranking
+        );
+
+        callback(ranking);
+
+    }, (error) => {
+
+        console.error(
+            "❌ Error leyendo ranking realtime:",
+            error
+        );
+
+        alert("No se pudo cargar el ranking realtime. Revisa reglas de Realtime Database.");
+
     });
 
-    ranking.sort((a,b) => {
+}
 
-        if(b.completed !== a.completed){
+function closeRankingModal(){
 
-            return b.completed - a.completed;
+    if(rankingUnsubscribe){
 
-        }
+        rankingUnsubscribe();
 
-        return a.updatedAt - b.updatedAt;
+        rankingUnsubscribe = null;
 
-    });
+    }
 
-    console.log("✅ Ranking cargado desde Firestore SDK:", ranking);
+    const modal = document.querySelector(".ranking-modal");
 
-    return ranking;
+    if(modal){
+
+        modal.classList.remove("show");
+
+        setTimeout(() => {
+
+            modal.remove();
+
+        },300);
+
+    }
 
 }
 
@@ -628,7 +688,7 @@ function renderRankingModal(ranking){
     modal.innerHTML = `
         <div class="ranking-content">
 
-            <button class="ranking-close">
+            <button class="ranking-close" aria-label="Cerrar ranking">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
@@ -657,15 +717,11 @@ function renderRankingModal(ranking){
 
     },50);
 
-    modal.querySelector(".ranking-close").addEventListener("click", () => {
+    const closeBtn = modal.querySelector(".ranking-close");
 
-        modal.classList.remove("show");
+    closeBtn.addEventListener("click", () => {
 
-        setTimeout(() => {
-
-            modal.remove();
-
-        },300);
+        closeRankingModal();
 
     });
 
@@ -673,13 +729,7 @@ function renderRankingModal(ranking){
 
         if(e.target === modal){
 
-            modal.classList.remove("show");
-
-            setTimeout(() => {
-
-                modal.remove();
-
-            },300);
+            closeRankingModal();
 
         }
 
@@ -687,7 +737,7 @@ function renderRankingModal(ranking){
 
 }
 
-async function openRanking(){
+function openRanking(){
 
     try{
 
@@ -700,17 +750,34 @@ async function openRanking(){
 
         }
 
-        const ranking = await getRankingData();
+        if(rankingUnsubscribe){
 
-        renderRankingModal(ranking);
+            rankingUnsubscribe();
+
+            rankingUnsubscribe = null;
+
+        }
+
+        rankingUnsubscribe = listenRankingRealtime((ranking) => {
+
+            renderRankingModal(ranking);
+
+            if(rankingButton){
+
+                rankingButton.innerHTML = `
+                    <i class="fa-solid fa-ranking-star"></i>
+                    Ver Ranking
+                `;
+
+            }
+
+        });
 
     }catch(error){
 
-        console.error("Error cargando ranking:", error);
+        console.error("Error cargando ranking realtime:", error);
 
-        alert("No se pudo cargar el ranking. Revisa permisos de Firestore.");
-
-    }finally{
+        alert("No se pudo cargar el ranking realtime.");
 
         if(rankingButton){
 
@@ -841,7 +908,7 @@ slots.forEach(slot => {
             applyDailyLocks();
 
             /* ========================================= */
-            /* 3. MOSTRAR IMAGEN EN PANTALLA */
+            /* 3. MOSTRAR IMAGEN */
             /* ========================================= */
 
             renderStickerImage(
@@ -865,78 +932,28 @@ slots.forEach(slot => {
             );
 
             /* ========================================= */
-            /* 4. GUARDAR EN FIRESTORE */
+            /* 4. GUARDAR RANKING EN REALTIME DATABASE */
             /* ========================================= */
 
-            console.log(`⏳ Guardando día ${day} en Firestore...`);
-
-            const albumRef = doc(db, "albums", user.uid);
-
-            const albumData = {
-                [`day${day}`]: downloadURL,
-                email:user.email,
-                name:user.email.split("@")[0],
-                completedCount:completed,
-                updatedAt:Date.now()
-            };
-
-            const savePromise = setDoc(
-                albumRef,
-                albumData,
-                { merge:true }
+            await saveDayRankingRealtime(
+                user,
+                day,
+                downloadURL
             );
-
-            const timeoutPromise = new Promise((_, reject) => {
-
-                setTimeout(() => {
-
-                    reject(
-                        new Error("Firestore tardó demasiado en responder.")
-                    );
-
-                },8000);
-
-            });
-
-            await Promise.race([
-                savePromise,
-                timeoutPromise
-            ]);
 
             console.log(
-                `✅ URL del día ${day} guardada en Firestore`
+                `✅ Día ${day} guardado en ranking realtime`
             );
-
-            /* ========================================= */
-            /* 5. VERIFICAR DOCUMENTO */
-            /* ========================================= */
-
-            const verifySnap = await getDoc(albumRef);
-
-            if(verifySnap.exists()){
-
-                console.log(
-                    "✅ Documento confirmado en Firestore:",
-                    verifySnap.data()
-                );
-
-            }else{
-
-                console.warn(
-                    "⚠️ Firestore no confirmó el documento albums del usuario."
-                );
-
-            }
 
         }catch(error){
 
-            console.warn(
-                "⚠️ La imagen subió y se pintó, pero Firestore no confirmó a tiempo:",
+            console.error(
+                "❌ Error completo al subir/guardar imagen:",
                 error
             );
 
             alert(
-                "La imagen se subió, pero Firestore tardó en confirmar. Refresca en unos segundos y revisa el ranking."
+                `Error guardando la imagen: ${error.code || error.message}`
             );
 
         }finally{
@@ -1000,7 +1017,7 @@ function playPop(){
 
     audio.play().catch(() => {
 
-        console.log("Audio bloqueado por el navegador.");
+        console.log("Audio bloqueado por el navegador o archivo no encontrado.");
 
     });
 
