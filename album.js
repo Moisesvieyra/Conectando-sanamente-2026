@@ -841,54 +841,7 @@ slots.forEach(slot => {
             applyDailyLocks();
 
             /* ========================================= */
-            /* 3. GUARDAR EN FIRESTORE */
-            /* ========================================= */
-
-            console.log(`⏳ Guardando día ${day} en Firestore...`);
-
-            const albumRef = doc(db, "albums", user.uid);
-
-            const albumData = {
-                [`day${day}`]: downloadURL,
-                email:user.email,
-                name:user.email.split("@")[0],
-                completedCount:completed,
-                updatedAt:Date.now()
-            };
-
-            await setDoc(
-                albumRef,
-                albumData,
-                { merge:true }
-            );
-
-            console.log(
-                `✅ URL del día ${day} guardada en Firestore`
-            );
-
-            /* ========================================= */
-            /* 4. VERIFICAR QUE FIRESTORE RESPONDIÓ */
-            /* ========================================= */
-
-            const verifySnap = await getDoc(albumRef);
-
-            if(verifySnap.exists()){
-
-                console.log(
-                    "✅ Documento confirmado en Firestore:",
-                    verifySnap.data()
-                );
-
-            }else{
-
-                console.warn(
-                    "⚠️ Firestore no confirmó el documento albums del usuario."
-                );
-
-            }
-
-            /* ========================================= */
-            /* 5. MOSTRAR IMAGEN EN PANTALLA */
+            /* 3. MOSTRAR IMAGEN EN PANTALLA */
             /* ========================================= */
 
             renderStickerImage(
@@ -911,12 +864,79 @@ slots.forEach(slot => {
                 `✅ Imagen del día ${day} pintada en el álbum`
             );
 
+            /* ========================================= */
+            /* 4. GUARDAR EN FIRESTORE */
+            /* ========================================= */
+
+            console.log(`⏳ Guardando día ${day} en Firestore...`);
+
+            const albumRef = doc(db, "albums", user.uid);
+
+            const albumData = {
+                [`day${day}`]: downloadURL,
+                email:user.email,
+                name:user.email.split("@")[0],
+                completedCount:completed,
+                updatedAt:Date.now()
+            };
+
+            const savePromise = setDoc(
+                albumRef,
+                albumData,
+                { merge:true }
+            );
+
+            const timeoutPromise = new Promise((_, reject) => {
+
+                setTimeout(() => {
+
+                    reject(
+                        new Error("Firestore tardó demasiado en responder.")
+                    );
+
+                },8000);
+
+            });
+
+            await Promise.race([
+                savePromise,
+                timeoutPromise
+            ]);
+
+            console.log(
+                `✅ URL del día ${day} guardada en Firestore`
+            );
+
+            /* ========================================= */
+            /* 5. VERIFICAR DOCUMENTO */
+            /* ========================================= */
+
+            const verifySnap = await getDoc(albumRef);
+
+            if(verifySnap.exists()){
+
+                console.log(
+                    "✅ Documento confirmado en Firestore:",
+                    verifySnap.data()
+                );
+
+            }else{
+
+                console.warn(
+                    "⚠️ Firestore no confirmó el documento albums del usuario."
+                );
+
+            }
+
         }catch(error){
 
-            console.error("❌ Error completo al subir/guardar imagen:", error);
+            console.warn(
+                "⚠️ La imagen subió y se pintó, pero Firestore no confirmó a tiempo:",
+                error
+            );
 
             alert(
-                `Error guardando la imagen: ${error.code || error.message}`
+                "La imagen se subió, pero Firestore tardó en confirmar. Refresca en unos segundos y revisa el ranking."
             );
 
         }finally{
