@@ -1,6 +1,7 @@
 /* =========================================================
    FIREBASE ENGINE • CONECTANDO SANAMENTE 2026
-   AGUAKAN ENTERPRISE PREMIUM SYSTEM V3
+   AGUAKAN ENTERPRISE PREMIUM SYSTEM V4
+   AUTH + STORAGE + FIRESTORE + REALTIME DATABASE
 ========================================================= */
 
 /* =========================================================
@@ -39,6 +40,13 @@ import {
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
+import {
+
+    getDatabase
+
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
 /* =========================================================
    FIREBASE CONFIG
 ========================================================= */
@@ -69,13 +77,6 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
-/*
-   IMPORTANTE:
-   Quitamos persistentLocalCache para evitar que Firestore
-   trabaje con datos locales y no escriba/lea correctamente
-   desde la base real.
-*/
-
 const db = initializeFirestore(app, {
 
     experimentalForceLongPolling: true,
@@ -85,6 +86,8 @@ const db = initializeFirestore(app, {
 });
 
 const storage = getStorage(app);
+
+const realtimeDB = getDatabase(app);
 
 /* =========================================================
    AGUAKAN ENGINE CONSOLE
@@ -96,13 +99,14 @@ console.log(`
  FIREBASE PREMIUM SYSTEM • CONECTANDO SANAMENTE 2026
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[STATUS]          : CONNECTED
-[AUTH SYSTEM]     : ONLINE
-[FIRESTORE]       : CONNECTED
-[STORAGE]         : ACTIVE
-[SECURITY]        : ENABLED
-[PROJECT]         : conectando-sanamente
-[VERSION]         : ENTERPRISE PREMIUM V3 NO CACHE
+[STATUS]            : CONNECTED
+[AUTH SYSTEM]       : ONLINE
+[FIRESTORE]         : CONNECTED
+[STORAGE]           : ACTIVE
+[REALTIME DATABASE] : ACTIVE
+[SECURITY]          : ENABLED
+[PROJECT]           : conectando-sanamente
+[VERSION]           : ENTERPRISE PREMIUM V4 REALTIME
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -384,4 +388,4 @@ function translateFirebaseError(code){
    EXPORTS
 ========================================================= */
 
-export { auth, db, storage };
+export { auth, db, storage, realtimeDB };
