@@ -26,7 +26,10 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
    CONFIG
 ========================================================= */
 
-const ADMIN_EMAIL = "ksanchez@aguakan.com";
+const ADMIN_EMAILS = [
+    "ksanchez@aguakan.com",
+    "echan@aguakan.com"
+];
 
 const TOTAL_DAYS = 21;
 
@@ -114,19 +117,18 @@ onAuthStateChanged(auth, async(user) => {
 
     const email = String(user.email || "").trim().toLowerCase();
 
-    if(email !== ADMIN_EMAIL.toLowerCase()){
+if(!ADMIN_EMAILS.includes(email)){
 
-        console.warn(
-            "Acceso denegado para:",
-            email
-        );
+    console.warn(
+        "Acceso denegado para:",
+        email
+    );
 
-        showAccessDenied();
+    showAccessDenied();
 
-        return;
+    return;
 
-    }
-
+}
     console.log(
         "Acceso autorizado para supervisora:",
         email
@@ -152,11 +154,23 @@ function setupAdminInfo(user){
 
     const name = getNameFromEmail(email);
 
-    if(adminName){
+if(adminName){
+
+    if(email.toLowerCase() === "ksanchez@aguakan.com"){
 
         adminName.innerText = "Keyla Sánchez";
 
+    }else if(email.toLowerCase() === "echan@aguakan.com"){
+
+        adminName.innerText = "Edith Chan";
+
+    }else{
+
+        adminName.innerText = name;
+
     }
+
+}
 
     if(adminEmail){
 
