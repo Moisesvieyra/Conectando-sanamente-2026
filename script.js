@@ -602,3 +602,76 @@ window.addEventListener('click', (e) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 });
+
+/* =========================================================
+   MOBILE MENU FIX FINAL
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const menuToggle = document.getElementById("menuToggle");
+    const menu = document.getElementById("menu");
+    const body = document.body;
+
+    console.log("BOTÓN MENÚ:", menuToggle);
+    console.log("MENÚ:", menu);
+
+    if(!menuToggle || !menu){
+
+        console.error("❌ No se encontró menuToggle o menu. Revisa los ID en index.html.");
+        return;
+
+    }
+
+    menuToggle.addEventListener("click", (e) => {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        console.log("✅ Click en menú detectado");
+
+        menu.classList.toggle("menu-active");
+        menu.classList.toggle("active");
+
+        menuToggle.classList.toggle("toggle-active");
+        menuToggle.classList.toggle("active");
+
+        body.classList.toggle("menu-open");
+
+        const icon = menuToggle.querySelector("i");
+
+        if(icon){
+
+            icon.classList.toggle("fa-bars");
+            icon.classList.toggle("fa-xmark");
+
+        }
+
+    });
+
+    menu.querySelectorAll("a").forEach(link => {
+
+        link.addEventListener("click", () => {
+
+            menu.classList.remove("menu-active");
+            menu.classList.remove("active");
+
+            menuToggle.classList.remove("toggle-active");
+            menuToggle.classList.remove("active");
+
+            body.classList.remove("menu-open");
+
+            const icon = menuToggle.querySelector("i");
+
+            if(icon){
+
+                icon.classList.add("fa-bars");
+                icon.classList.remove("fa-xmark");
+
+            }
+
+        });
+
+    });
+
+});
