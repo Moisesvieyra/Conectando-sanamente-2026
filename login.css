@@ -1,0 +1,514 @@
+/* =========================================================
+   LOGIN • CONECTANDO SANAMENTE 2026
+   AGUAKAN PREMIUM AUTH UI
+========================================================= */
+
+:root{
+
+    --primary:#0b5aa7;
+    --primary-dark:#062b52;
+    --secondary:#20c0d8;
+    --white:#ffffff;
+    --text:#ffffff;
+    --muted:rgba(255,255,255,.78);
+    --glass:rgba(255,255,255,.13);
+    --glass-border:rgba(255,255,255,.22);
+    --shadow:0 30px 90px rgba(0,0,0,.28);
+    --radius:34px;
+
+}
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+html,
+body{
+
+    width:100%;
+    min-height:100%;
+    font-family:"Poppins", sans-serif;
+
+}
+
+body{
+
+    min-height:100vh;
+    overflow-x:hidden;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:28px;
+
+    background:
+    radial-gradient(circle at 18% 15%, rgba(32,192,216,.55), transparent 28%),
+    radial-gradient(circle at 82% 84%, rgba(11,90,167,.45), transparent 34%),
+    linear-gradient(135deg,#062b52 0%,#0b5aa7 48%,#20c0d8 100%);
+
+    position:relative;
+
+}
+
+body::before{
+
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+
+    background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+
+    background-size:42px 42px;
+    opacity:.35;
+
+}
+
+body::after{
+
+    content:"";
+    position:fixed;
+    width:620px;
+    height:620px;
+    border-radius:50%;
+    right:-240px;
+    top:-180px;
+
+    background:rgba(255,255,255,.18);
+    filter:blur(80px);
+    pointer-events:none;
+
+}
+
+.login-container,
+.auth-container,
+.login-box,
+.auth-box{
+
+    width:100%;
+    max-width:460px;
+
+    padding:44px 34px;
+
+    border-radius:var(--radius);
+
+    background:
+    linear-gradient(
+        145deg,
+        rgba(255,255,255,.19),
+        rgba(255,255,255,.08)
+    );
+
+    border:1px solid var(--glass-border);
+
+    box-shadow:var(--shadow);
+
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+
+    position:relative;
+    overflow:hidden;
+    z-index:1;
+
+}
+
+.login-container::before,
+.auth-container::before,
+.login-box::before,
+.auth-box::before{
+
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:
+    linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,.18),
+        transparent
+    );
+
+    transform:translateX(-120%);
+    animation:shine 7s infinite linear;
+
+    pointer-events:none;
+
+}
+
+@keyframes shine{
+
+    0%{
+        transform:translateX(-120%);
+    }
+
+    100%{
+        transform:translateX(120%);
+    }
+
+}
+
+.logo-auth,
+.login-logo,
+.auth-logo{
+
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+
+    margin-bottom:30px;
+
+}
+
+.logo-auth img,
+.login-logo img,
+.auth-logo img{
+
+    width:96px;
+    height:auto;
+    margin-bottom:14px;
+    filter:drop-shadow(0 12px 22px rgba(0,0,0,.18));
+
+}
+
+.logo-auth i,
+.login-logo i,
+.auth-logo i{
+
+    width:86px;
+    height:86px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:26px;
+
+    background:
+    linear-gradient(135deg,var(--primary),var(--secondary));
+
+    color:white;
+    font-size:2.1rem;
+
+    box-shadow:0 18px 40px rgba(0,0,0,.22);
+
+    margin-bottom:20px;
+
+}
+
+h1,
+h2,
+.auth-title{
+
+    color:white;
+    text-align:center;
+    font-size:2rem;
+    font-weight:900;
+    line-height:1.1;
+    margin-bottom:10px;
+
+}
+
+.subtitle,
+.auth-subtitle,
+.login-subtitle,
+p{
+
+    color:var(--muted);
+    text-align:center;
+    font-size:.96rem;
+    line-height:1.6;
+
+}
+
+form{
+
+    margin-top:28px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+
+}
+
+.input-group,
+.form-group{
+
+    position:relative;
+
+}
+
+.input-group i,
+.form-group i{
+
+    position:absolute;
+    left:20px;
+    top:50%;
+    transform:translateY(-50%);
+    color:rgba(255,255,255,.78);
+    font-size:1rem;
+    z-index:2;
+
+}
+
+input{
+
+    width:100%;
+    height:64px;
+
+    padding:0 20px 0 56px;
+
+    border:none;
+    outline:none;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.22);
+
+    color:white;
+    font-size:1rem;
+    font-weight:600;
+
+    transition:.3s ease;
+
+}
+
+input::placeholder{
+
+    color:rgba(255,255,255,.72);
+
+}
+
+input:focus{
+
+    background:rgba(255,255,255,.22);
+    border-color:rgba(255,255,255,.48);
+    box-shadow:0 0 0 4px rgba(32,192,216,.22);
+
+}
+
+button,
+.login-btn,
+.auth-btn,
+.primary-btn{
+
+    width:100%;
+    height:66px;
+
+    border:none;
+    outline:none;
+    border-radius:22px;
+
+    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+
+    background:
+    linear-gradient(135deg,var(--primary),var(--secondary));
+
+    color:white;
+
+    font-size:1rem;
+    font-weight:900;
+    letter-spacing:.2px;
+
+    box-shadow:0 18px 42px rgba(0,0,0,.20);
+
+    transition:.32s cubic-bezier(.17,.89,.32,1.25);
+
+}
+
+button:hover,
+.login-btn:hover,
+.auth-btn:hover,
+.primary-btn:hover{
+
+    transform:translateY(-4px);
+    box-shadow:0 24px 50px rgba(0,0,0,.28);
+
+}
+
+.secondary-btn,
+.register-btn{
+
+    background:rgba(255,255,255,.13);
+    border:1px solid rgba(255,255,255,.25);
+    box-shadow:none;
+
+}
+
+.forgot-btn{
+
+    height:auto;
+    padding:0;
+    margin-top:-4px;
+
+    background:none;
+    box-shadow:none;
+    border:none;
+
+    color:white;
+    opacity:.88;
+
+    font-size:.9rem;
+    font-weight:800;
+
+    text-decoration:underline;
+    text-underline-offset:4px;
+
+}
+
+.forgot-btn:hover{
+
+    transform:none;
+    box-shadow:none;
+    color:#ffffff;
+    opacity:1;
+
+}
+
+.auth-switch,
+.login-switch{
+
+    margin-top:22px;
+    text-align:center;
+    color:var(--muted);
+    font-size:.9rem;
+
+}
+
+.auth-switch a,
+.login-switch a{
+
+    color:white;
+    font-weight:900;
+    text-decoration:underline;
+    text-underline-offset:4px;
+
+}
+
+/* alerta si firebase crea div flotante */
+body > div[style*="position: fixed"]{
+
+    max-width:calc(100% - 32px);
+
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:768px){
+
+    body{
+
+        min-height:100vh;
+        padding:22px 16px;
+        align-items:flex-start;
+
+    }
+
+    .login-container,
+    .auth-container,
+    .login-box,
+    .auth-box{
+
+        max-width:100%;
+        margin-top:26px;
+        padding:36px 26px;
+        border-radius:30px;
+
+    }
+
+    h1,
+    h2,
+    .auth-title{
+
+        font-size:1.7rem;
+
+    }
+
+    input{
+
+        height:60px;
+        font-size:.95rem;
+
+    }
+
+    button,
+    .login-btn,
+    .auth-btn,
+    .primary-btn{
+
+        height:62px;
+
+    }
+
+}
+
+@media(max-width:420px){
+
+    body{
+
+        padding:18px 12px;
+
+    }
+
+    .login-container,
+    .auth-container,
+    .login-box,
+    .auth-box{
+
+        padding:32px 20px;
+        border-radius:26px;
+
+    }
+
+    .logo-auth i,
+    .login-logo i,
+    .auth-logo i{
+
+        width:76px;
+        height:76px;
+        font-size:1.9rem;
+
+    }
+
+    h1,
+    h2,
+    .auth-title{
+
+        font-size:1.55rem;
+
+    }
+
+    .subtitle,
+    .auth-subtitle,
+    .login-subtitle,
+    p{
+
+        font-size:.88rem;
+
+    }
+
+    input{
+
+        height:58px;
+        padding-left:52px;
+
+    }
+
+}
