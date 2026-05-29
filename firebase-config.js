@@ -284,12 +284,10 @@ window.resetPassword = async()=>{
             email
         );
 
-        showAlert(
-            "Te enviamos un correo para restablecer tu contraseña 📩",
-            "#2ecc71"
-        );
-
-    }
+showAlert(
+    `Te enviamos un correo a ${email}. Revisa tu bandeja de entrada o spam 📩`,
+    "#2ecc71"
+);
 
     catch(error){
 
