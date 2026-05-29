@@ -98,7 +98,10 @@ const realtimeDB = getDatabase(app);
    ADMIN CONFIG
 ========================================================= */
 
-const ADMIN_EMAIL = "ksanchez@aguakan.com";
+const ADMIN_EMAILS = [
+    "ksanchez@aguakan.com",
+    "echan@aguakan.com"
+];
 
 /* =========================================================
    AGUAKAN ENGINE CONSOLE
@@ -134,7 +137,7 @@ function redirectUserByRole(user){
     const userEmail =
     String(user?.email || "").trim().toLowerCase();
 
-    if(userEmail === ADMIN_EMAIL.toLowerCase()){
+    if(ADMIN_EMAILS.includes(userEmail)){
 
         window.location.href = "admin-ranking.html";
 
