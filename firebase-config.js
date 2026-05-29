@@ -1,7 +1,7 @@
 /* =========================================================
    FIREBASE ENGINE • CONECTANDO SANAMENTE 2026
-   AGUAKAN ENTERPRISE PREMIUM SYSTEM V5
-   AUTH + STORAGE + FIRESTORE + REALTIME DATABASE + RESET PASSWORD
+   AGUAKAN ENTERPRISE PREMIUM SYSTEM V6
+   AUTH + STORAGE + FIRESTORE + REALTIME DATABASE + RESET PASSWORD + ADMIN ROUTING
 ========================================================= */
 
 /* =========================================================
@@ -95,6 +95,12 @@ const storage = getStorage(app);
 const realtimeDB = getDatabase(app);
 
 /* =========================================================
+   ADMIN CONFIG
+========================================================= */
+
+const ADMIN_EMAIL = "ksanchez@aguakan.com";
+
+/* =========================================================
    AGUAKAN ENGINE CONSOLE
 ========================================================= */
 
@@ -110,13 +116,35 @@ console.log(`
 [STORAGE]           : ACTIVE
 [REALTIME DATABASE] : ACTIVE
 [RESET PASSWORD]    : ENABLED
+[ADMIN ROUTING]     : ENABLED
 [SECURITY]          : ENABLED
 [PROJECT]           : conectando-sanamente
-[VERSION]           : ENTERPRISE PREMIUM V5 AUTH RESET
+[VERSION]           : ENTERPRISE PREMIUM V6 ADMIN ROUTING
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 `);
+
+/* =========================================================
+   ROUTE USER BY ROLE
+========================================================= */
+
+function redirectUserByRole(user){
+
+    const userEmail =
+    String(user?.email || "").trim().toLowerCase();
+
+    if(userEmail === ADMIN_EMAIL.toLowerCase()){
+
+        window.location.href = "admin-ranking.html";
+
+    }else{
+
+        window.location.href = "album.html";
+
+    }
+
+}
 
 /* =========================================================
    REGISTER USER
@@ -159,7 +187,7 @@ window.registerUser = async(email,password)=>{
 
         setTimeout(()=>{
 
-            window.location.href = "album.html";
+            redirectUserByRole(userCredential.user);
 
         },1400);
 
@@ -219,7 +247,7 @@ window.loginUser = async(email,password)=>{
 
         setTimeout(()=>{
 
-            window.location.href = "album.html";
+            redirectUserByRole(userCredential.user);
 
         },1400);
 
@@ -340,9 +368,7 @@ onAuthStateChanged(auth,(user)=>{
             user.email
         );
 
-    }
-
-    else{
+    }else{
 
         console.log(
             "No hay sesión iniciada"
