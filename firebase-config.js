@@ -78,6 +78,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
+
+/* Correo de Firebase en español */
 auth.languageCode = "es";
 
 const db = initializeFirestore(app, {
@@ -122,7 +124,7 @@ console.log(`
 
 window.registerUser = async(email,password)=>{
 
-    email = String(email || "").trim();
+    email = String(email || "").trim().toLowerCase();
     password = String(password || "").trim();
 
     if(email === "" || password === ""){
@@ -182,7 +184,7 @@ window.registerUser = async(email,password)=>{
 
 window.loginUser = async(email,password)=>{
 
-    email = String(email || "").trim();
+    email = String(email || "").trim().toLowerCase();
     password = String(password || "").trim();
 
     if(email === "" || password === ""){
@@ -214,11 +216,6 @@ window.loginUser = async(email,password)=>{
             "Bienvenido a Aguakan 💧",
             "#2ecc71"
         );
-
-       showAlert(
-    `Te enviamos un correo a ${email}. Revisa tu bandeja de entrada o spam 📩`,
-    "#2ecc71"
-);
 
         setTimeout(()=>{
 
@@ -262,13 +259,26 @@ window.resetPassword = async()=>{
 
     }
 
-    const email = emailInput.value.trim();
+    const email = emailInput.value.trim().toLowerCase();
 
     if(email === ""){
 
         showAlert(
-            "Ingresa tu correo para recuperar tu contraseña",
+            "Primero escribe tu correo para recuperar tu contraseña",
             "#ffb347"
+        );
+
+        emailInput.focus();
+
+        return;
+
+    }
+
+    if(!email.includes("@") || !email.includes(".")){
+
+        showAlert(
+            "Escribe un correo válido",
+            "#ff5c5c"
         );
 
         emailInput.focus();
@@ -279,19 +289,34 @@ window.resetPassword = async()=>{
 
     try{
 
+        showAlert(
+            "Enviando correo de recuperación...",
+            "#0b5aa7"
+        );
+
         await sendPasswordResetEmail(
             auth,
             email
         );
 
-showAlert(
-    `Te enviamos un correo a ${email}. Revisa tu bandeja de entrada o spam 📩`,
-    "#2ecc71"
-);
+        showAlert(
+            `Te enviamos un correo a ${email}. Revisa tu bandeja de entrada o spam 📩`,
+            "#2ecc71"
+        );
+
+        console.log(
+            "Correo de recuperación enviado a:",
+            email
+        );
+
+    }
 
     catch(error){
 
-        console.error(error);
+        console.error(
+            "Error recuperando contraseña:",
+            error
+        );
 
         showAlert(
             translateFirebaseError(error.code),
