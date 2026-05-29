@@ -22,7 +22,7 @@
     content="Acceso al Álbum de Bienestar de Conectando Sanamente 2026 por Aguakan.">
 
     <title>
-        Aguakan • Acceso | Conectando Sanamente 2026
+        Acceso Aguakan | Conectando Sanamente 2026
     </title>
 
     <!-- =========================================================
@@ -56,7 +56,7 @@
 
     <link
     rel="stylesheet"
-    href="login.css?v=1.0">
+    href="login.css?v=4.0">
 
 </head>
 
@@ -66,50 +66,61 @@
        BACKGROUND DECORATION
     ========================================================= -->
 
-    <div class="login-bg login-bg-one"></div>
+    <div class="auth-background">
 
-    <div class="login-bg login-bg-two"></div>
+        <div class="auth-orb auth-orb-one"></div>
 
-    <div class="login-grid-bg"></div>
+        <div class="auth-orb auth-orb-two"></div>
+
+        <div class="auth-orb auth-orb-three"></div>
+
+        <div class="auth-grid-bg"></div>
+
+    </div>
 
     <!-- =========================================================
-       PAGE
+       MAIN AUTH WRAPPER
     ========================================================= -->
 
     <main class="auth-page">
 
         <!-- =========================================================
-           BRAND PANEL
+           BRAND / LEFT PANEL
         ========================================================= -->
 
         <section class="auth-brand-panel">
 
-            <!-- TOP LOGO -->
+            <!-- TOP BRAND -->
 
-            <a
-            href="index.html"
-            class="auth-brand-logo"
-            aria-label="Volver al inicio">
+            <header class="auth-brand-header">
 
-                <img
-                src="aguakan-logo.png"
-                alt="Logo Aguakan">
+                <a
+                href="index.html"
+                class="auth-brand-logo"
+                aria-label="Volver a la página principal">
 
-                <div class="auth-brand-text">
+                    <img
+                    src="aguakan-logo.png"
+                    alt="Aguakan"
+                    class="aguakan-logo">
 
-                    <h1>
-                        Conectando Sanamente
-                    </h1>
+                    <div class="auth-brand-text">
 
-                    <p>
-                        Congreso Empresarial de Salud Mental
-                    </p>
+                        <h1>
+                            Conectando Sanamente
+                        </h1>
 
-                </div>
+                        <p>
+                            Congreso Empresarial de Salud Mental
+                        </p>
 
-            </a>
+                    </div>
 
-            <!-- HERO TEXT -->
+                </a>
+
+            </header>
+
+            <!-- BRAND CONTENT -->
 
             <div class="auth-brand-content">
 
@@ -121,23 +132,28 @@
 
                 <h2>
 
-                    Bienvenido al
-                    <span>Álbum de Bienestar</span>
+                    Tu álbum de
+                    <span>bienestar</span>
 
                 </h2>
 
                 <p>
 
-                    Inicia sesión para subir tus evidencias, completar tus retos diarios
-                    y participar en el ranking oficial de Conectando Sanamente 2026.
+                    Accede a tu espacio personal para subir evidencias,
+                    completar los 21 retos diarios y participar en el ranking
+                    oficial de Conectando Sanamente 2026.
 
                 </p>
 
                 <div class="auth-feature-list">
 
-                    <div class="auth-feature">
+                    <article class="auth-feature">
 
-                        <i class="fa-solid fa-camera-retro"></i>
+                        <div class="auth-feature-icon">
+
+                            <i class="fa-solid fa-camera-retro"></i>
+
+                        </div>
 
                         <div>
 
@@ -146,16 +162,42 @@
                             </strong>
 
                             <small>
-                                Sube tu foto del reto correspondiente.
+                                Sube una imagen por cada reto completado.
                             </small>
 
                         </div>
 
-                    </div>
+                    </article>
 
-                    <div class="auth-feature">
+                    <article class="auth-feature">
 
-                        <i class="fa-solid fa-ranking-star"></i>
+                        <div class="auth-feature-icon">
+
+                            <i class="fa-solid fa-calendar-check"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Retos por día
+                            </strong>
+
+                            <small>
+                                Avanza conforme al calendario del álbum.
+                            </small>
+
+                        </div>
+
+                    </article>
+
+                    <article class="auth-feature">
+
+                        <div class="auth-feature-icon">
+
+                            <i class="fa-solid fa-ranking-star"></i>
+
+                        </div>
 
                         <div>
 
@@ -164,38 +206,20 @@
                             </strong>
 
                             <small>
-                                Mira tu avance frente a otros participantes.
+                                Consulta tu progreso frente a otros participantes.
                             </small>
 
                         </div>
 
-                    </div>
-
-                    <div class="auth-feature">
-
-                        <i class="fa-solid fa-trophy"></i>
-
-                        <div>
-
-                            <strong>
-                                21 retos
-                            </strong>
-
-                            <small>
-                                Completa el álbum y conviértete en leyenda.
-                            </small>
-
-                        </div>
-
-                    </div>
+                    </article>
 
                 </div>
 
             </div>
 
-            <!-- DECORATIVE CARD -->
+            <!-- FLOATING DETAILS -->
 
-            <div class="auth-floating-card card-one">
+            <div class="auth-floating-card floating-card-one">
 
                 <i class="fa-solid fa-heart-pulse"></i>
 
@@ -213,7 +237,7 @@
 
             </div>
 
-            <div class="auth-floating-card card-two">
+            <div class="auth-floating-card floating-card-two">
 
                 <i class="fa-solid fa-brain"></i>
 
@@ -234,7 +258,7 @@
         </section>
 
         <!-- =========================================================
-           LOGIN PANEL
+           FORM / RIGHT PANEL
         ========================================================= -->
 
         <section class="auth-form-panel">
@@ -247,13 +271,14 @@
 
                     <img
                     src="aguakan-logo.png"
-                    alt="Logo Aguakan">
+                    alt="Aguakan"
+                    class="aguakan-logo">
 
                 </div>
 
                 <!-- CARD HEADER -->
 
-                <div class="auth-card-header">
+                <header class="auth-card-header">
 
                     <div class="auth-icon">
 
@@ -263,7 +288,7 @@
 
                     <span class="auth-card-badge">
 
-                        Plataforma Empresarial
+                        Plataforma empresarial
 
                     </span>
 
@@ -275,13 +300,14 @@
                         Ingresa con tu correo y contraseña para continuar.
                     </p>
 
-                </div>
+                </header>
 
                 <!-- FORM -->
 
                 <form
                 class="auth-form"
                 id="loginForm"
+                autocomplete="on"
                 onsubmit="login(); return false;">
 
                     <!-- EMAIL -->
@@ -336,11 +362,12 @@
 
                     <div class="auth-options">
 
-                        <label class="remember-option">
+                        <label class="remember-option" for="rememberUser">
 
                             <input
                             type="checkbox"
-                            id="rememberUser">
+                            id="rememberUser"
+                            name="rememberUser">
 
                             <span>
                                 Recordarme
@@ -376,7 +403,7 @@
                     <div class="auth-divider">
 
                         <span>
-                            o crea tu cuenta
+                            o
                         </span>
 
                     </div>
@@ -398,7 +425,7 @@
 
                 <!-- FOOTER -->
 
-                <div class="auth-card-footer">
+                <footer class="auth-card-footer">
 
                     <a href="index.html">
 
@@ -412,7 +439,7 @@
                         Conectando Sanamente 2026
                     </p>
 
-                </div>
+                </footer>
 
             </div>
 
@@ -426,7 +453,7 @@
 
     <script
     type="module"
-    src="firebase-config.js?v=8.0">
+    src="firebase-config.js?v=8.1">
     </script>
 
     <!-- =========================================================
