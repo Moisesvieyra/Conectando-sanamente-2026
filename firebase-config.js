@@ -1,7 +1,7 @@
 /* =========================================================
    FIREBASE ENGINE • CONECTANDO SANAMENTE 2026
-   AGUAKAN ENTERPRISE PREMIUM SYSTEM V4
-   AUTH + STORAGE + FIRESTORE + REALTIME DATABASE
+   AGUAKAN ENTERPRISE PREMIUM SYSTEM V5
+   AUTH + STORAGE + FIRESTORE + REALTIME DATABASE + RESET PASSWORD
 ========================================================= */
 
 /* =========================================================
@@ -21,7 +21,9 @@ import {
 
     onAuthStateChanged,
 
-    signOut
+    signOut,
+
+    sendPasswordResetEmail
 
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -104,9 +106,10 @@ console.log(`
 [FIRESTORE]         : CONNECTED
 [STORAGE]           : ACTIVE
 [REALTIME DATABASE] : ACTIVE
+[RESET PASSWORD]    : ENABLED
 [SECURITY]          : ENABLED
 [PROJECT]           : conectando-sanamente
-[VERSION]           : ENTERPRISE PREMIUM V4 REALTIME
+[VERSION]           : ENTERPRISE PREMIUM V5 AUTH RESET
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -117,6 +120,9 @@ console.log(`
 ========================================================= */
 
 window.registerUser = async(email,password)=>{
+
+    email = String(email || "").trim();
+    password = String(password || "").trim();
 
     if(email === "" || password === ""){
 
@@ -148,6 +154,12 @@ window.registerUser = async(email,password)=>{
             "#2ecc71"
         );
 
+        setTimeout(()=>{
+
+            window.location.href = "album.html";
+
+        },1400);
+
     }
 
     catch(error){
@@ -168,6 +180,9 @@ window.registerUser = async(email,password)=>{
 ========================================================= */
 
 window.loginUser = async(email,password)=>{
+
+    email = String(email || "").trim();
+    password = String(password || "").trim();
 
     if(email === "" || password === ""){
 
@@ -203,7 +218,70 @@ window.loginUser = async(email,password)=>{
 
             window.location.href = "album.html";
 
-        },1500);
+        },1400);
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        showAlert(
+            translateFirebaseError(error.code),
+            "#ff5c5c"
+        );
+
+    }
+
+};
+
+/* =========================================================
+   RESET PASSWORD
+========================================================= */
+
+window.resetPassword = async()=>{
+
+    const emailInput =
+    document.getElementById("email") ||
+    document.querySelector("input[type='email']");
+
+    if(!emailInput){
+
+        showAlert(
+            "No se encontró el campo de correo",
+            "#ff5c5c"
+        );
+
+        return;
+
+    }
+
+    const email = emailInput.value.trim();
+
+    if(email === ""){
+
+        showAlert(
+            "Ingresa tu correo para recuperar tu contraseña",
+            "#ffb347"
+        );
+
+        emailInput.focus();
+
+        return;
+
+    }
+
+    try{
+
+        await sendPasswordResetEmail(
+            auth,
+            email
+        );
+
+        showAlert(
+            "Te enviamos un correo para restablecer tu contraseña 📩",
+            "#2ecc71"
+        );
 
     }
 
@@ -287,7 +365,17 @@ window.logoutUser = async()=>{
 
 function showAlert(message,color){
 
+    const oldAlert = document.querySelector(".aguakan-alert");
+
+    if(oldAlert){
+
+        oldAlert.remove();
+
+    }
+
     const alert = document.createElement("div");
+
+    alert.className = "aguakan-alert";
 
     alert.innerText = message;
 
@@ -297,13 +385,15 @@ function showAlert(message,color){
 
     alert.style.right = "30px";
 
+    alert.style.maxWidth = "calc(100% - 40px)";
+
     alert.style.padding = "18px 30px";
 
     alert.style.background = color;
 
     alert.style.color = "white";
 
-    alert.style.fontWeight = "700";
+    alert.style.fontWeight = "800";
 
     alert.style.borderRadius = "18px";
 
@@ -312,7 +402,7 @@ function showAlert(message,color){
 
     alert.style.zIndex = "99999";
 
-    alert.style.fontFamily = "Poppins";
+    alert.style.fontFamily = "Poppins, sans-serif";
 
     alert.style.opacity = "0";
 
@@ -322,6 +412,8 @@ function showAlert(message,color){
     alert.style.transition = ".4s ease";
 
     alert.style.backdropFilter = "blur(10px)";
+
+    alert.style.textAlign = "center";
 
     document.body.appendChild(alert);
 
@@ -347,7 +439,7 @@ function showAlert(message,color){
 
         },400);
 
-    },3000);
+    },3600);
 
 }
 
@@ -365,17 +457,29 @@ function translateFirebaseError(code){
         case "auth/invalid-email":
             return "Correo inválido";
 
+        case "auth/missing-email":
+            return "Ingresa tu correo";
+
         case "auth/weak-password":
             return "La contraseña debe tener mínimo 6 caracteres";
 
         case "auth/invalid-credential":
             return "Correo o contraseña incorrectos";
 
+        case "auth/wrong-password":
+            return "Contraseña incorrecta";
+
         case "auth/user-not-found":
-            return "Usuario no encontrado";
+            return "No existe una cuenta con ese correo";
+
+        case "auth/too-many-requests":
+            return "Demasiados intentos. Intenta más tarde";
 
         case "auth/network-request-failed":
             return "Error de conexión";
+
+        case "auth/operation-not-allowed":
+            return "Este método de acceso no está habilitado";
 
         default:
             return "Error inesperado";
