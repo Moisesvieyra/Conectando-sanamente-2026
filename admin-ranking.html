@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <!-- =========================================================
+       META
+    ========================================================= -->
+
+    <meta charset="UTF-8">
+
+    <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <meta
+    name="theme-color"
+    content="#0b5aa7">
+
+    <meta
+    name="description"
+    content="Panel de supervisión del ranking del Álbum de Bienestar de Conectando Sanamente 2026.">
+
+    <title>
+        Panel de Supervisión | Conectando Sanamente 2026
+    </title>
+
+    <!-- =========================================================
+       FONTS
+    ========================================================= -->
+
+    <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com">
+
+    <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin>
+
+    <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+    <!-- =========================================================
+       ICONS
+    ========================================================= -->
+
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- =========================================================
+       CSS ADMIN
+    ========================================================= -->
+
+    <link
+    rel="stylesheet"
+    href="admin-ranking.css?v=1.0">
+
+</head>
+
+<body>
+
+    <!-- =========================================================
+       BACKGROUND DECORATION
+    ========================================================= -->
+
+    <div class="admin-bg admin-bg-one"></div>
+
+    <div class="admin-bg admin-bg-two"></div>
+
+    <div class="admin-grid-bg"></div>
+
+    <!-- =========================================================
+       LOADING SCREEN
+    ========================================================= -->
+
+    <div class="admin-loader" id="adminLoader">
+
+        <div class="loader-card">
+
+            <div class="loader-icon">
+
+                <i class="fa-solid fa-ranking-star"></i>
+
+            </div>
+
+            <h2>
+                Cargando panel
+            </h2>
+
+            <p>
+                Validando acceso de supervisión...
+            </p>
+
+            <div class="loader-line">
+
+                <span></span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+       ADMIN APP
+    ========================================================= -->
+
+    <main class="admin-page" id="adminPage">
+
+        <!-- =========================================================
+           SIDEBAR
+        ========================================================= -->
+
+        <aside class="admin-sidebar">
+
+            <div class="sidebar-brand">
+
+                <img
+                src="aguakan-logo.png"
+                alt="Aguakan"
+                class="sidebar-logo">
+
+                <div>
+
+                    <h1>
+                        Conectando Sanamente
+                    </h1>
+
+                    <p>
+                        Panel de Supervisión
+                    </p>
+
+                </div>
+
+            </div>
+
+            <nav class="sidebar-nav">
+
+                <a href="#resumen" class="sidebar-link active">
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    <span>
+                        Resumen
+                    </span>
+
+                </a>
+
+                <a href="#ranking" class="sidebar-link">
+
+                    <i class="fa-solid fa-ranking-star"></i>
+
+                    <span>
+                        Ranking
+                    </span>
+
+                </a>
+
+                <a href="#ganador" class="sidebar-link">
+
+                    <i class="fa-solid fa-trophy"></i>
+
+                    <span>
+                        Ganador global
+                    </span>
+
+                </a>
+
+                <a href="#participantes" class="sidebar-link">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    <span>
+                        Participantes
+                    </span>
+
+                </a>
+
+            </nav>
+
+            <div class="sidebar-footer">
+
+                <button
+                type="button"
+                class="sidebar-action"
+                onclick="window.location.href='index.html'">
+
+                    <i class="fa-solid fa-house"></i>
+
+                    <span>
+                        Inicio
+                    </span>
+
+                </button>
+
+                <button
+                type="button"
+                class="sidebar-action danger"
+                id="logoutBtn">
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    <span>
+                        Cerrar sesión
+                    </span>
+
+                </button>
+
+            </div>
+
+        </aside>
+
+        <!-- =========================================================
+           CONTENT
+        ========================================================= -->
+
+        <section class="admin-content">
+
+            <!-- =========================================================
+               TOPBAR
+            ========================================================= -->
+
+            <header class="admin-topbar">
+
+                <div class="topbar-left">
+
+                    <span class="admin-kicker">
+
+                        AGUAKAN • CONGRESO 2026
+
+                    </span>
+
+                    <h2>
+                        Panel de ranking y seguimiento
+                    </h2>
+
+                    <p>
+                        Consulta en tiempo real el avance de los participantes del Álbum de Bienestar.
+                    </p>
+
+                </div>
+
+                <div class="topbar-right">
+
+                    <div class="admin-user-card">
+
+                        <div class="admin-user-avatar">
+
+                            <i class="fa-solid fa-user-shield"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong id="adminName">
+                                Supervisora
+                            </strong>
+
+                            <span id="adminEmail">
+                                Validando usuario...
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+            <!-- =========================================================
+               WINNER BANNER
+            ========================================================= -->
+
+            <section class="winner-banner" id="winnerBanner">
+
+                <div class="winner-icon">
+
+                    <i class="fa-solid fa-crown"></i>
+
+                </div>
+
+                <div>
+
+                    <span>
+                        Ganador global
+                    </span>
+
+                    <h3 id="winnerText">
+                        Aún no hay ganador del álbum de bienestar
+                    </h3>
+
+                </div>
+
+            </section>
+
+            <!-- =========================================================
+               SUMMARY CARDS
+            ========================================================= -->
+
+            <section class="summary-grid" id="resumen">
+
+                <article class="summary-card">
+
+                    <div class="summary-icon blue">
+
+                        <i class="fa-solid fa-users"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Participantes
+                        </span>
+
+                        <h3 id="totalParticipants">
+                            0
+                        </h3>
+
+                        <p>
+                            Usuarios con avance registrado
+                        </p>
+
+                    </div>
+
+                </article>
+
+                <article class="summary-card">
+
+                    <div class="summary-icon cyan">
+
+                        <i class="fa-solid fa-calendar-check"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Retos completados
+                        </span>
+
+                        <h3 id="totalChallenges">
+                            0
+                        </h3>
+
+                        <p>
+                            Evidencias registradas en total
+                        </p>
+
+                    </div>
+
+                </article>
+
+                <article class="summary-card">
+
+                    <div class="summary-icon green">
+
+                        <i class="fa-solid fa-chart-simple"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Promedio general
+                        </span>
+
+                        <h3 id="averageProgress">
+                            0%
+                        </h3>
+
+                        <p>
+                            Avance promedio del grupo
+                        </p>
+
+                    </div>
+
+                </article>
+
+                <article class="summary-card">
+
+                    <div class="summary-icon gold">
+
+                        <i class="fa-solid fa-trophy"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Álbumes completos
+                        </span>
+
+                        <h3 id="completedAlbums">
+                            0
+                        </h3>
+
+                        <p>
+                            Participantes con 21 retos
+                        </p>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+            <!-- =========================================================
+               MAIN DASHBOARD GRID
+            ========================================================= -->
+
+            <section class="dashboard-grid">
+
+                <!-- =====================================================
+                   RANKING PANEL
+                ====================================================== -->
+
+                <article class="dashboard-card ranking-panel" id="ranking">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <span>
+                                Ranking en vivo
+                            </span>
+
+                            <h3>
+                                Participantes con mayor avance
+                            </h3>
+
+                        </div>
+
+                        <button
+                        type="button"
+                        class="refresh-btn"
+                        id="refreshRankingBtn">
+
+                            <i class="fa-solid fa-rotate"></i>
+
+                            Actualizar
+
+                        </button>
+
+                    </div>
+
+                    <div class="ranking-list" id="rankingList">
+
+                        <div class="empty-state">
+
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+
+                            <p>
+                                Cargando ranking...
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+                <!-- =====================================================
+                   WINNER PANEL
+                ====================================================== -->
+
+                <article class="dashboard-card winner-panel" id="ganador">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <span>
+                                Primer lugar
+                            </span>
+
+                            <h3>
+                                Ganador del álbum
+                            </h3>
+
+                        </div>
+
+                        <div class="status-pill" id="winnerStatus">
+
+                            Pendiente
+
+                        </div>
+
+                    </div>
+
+                    <div class="winner-card" id="winnerCard">
+
+                        <div class="winner-placeholder">
+
+                            <div class="winner-big-icon">
+
+                                <i class="fa-solid fa-crown"></i>
+
+                            </div>
+
+                            <h4>
+                                Aún no hay ganador
+                            </h4>
+
+                            <p>
+                                El primer participante que complete los 21 retos aparecerá aquí automáticamente.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+            <!-- =========================================================
+               PARTICIPANTS TABLE
+            ========================================================= -->
+
+            <section class="dashboard-card participants-panel" id="participantes">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span>
+                            Control detallado
+                        </span>
+
+                        <h3>
+                            Participantes registrados en el ranking
+                        </h3>
+
+                    </div>
+
+                    <div class="table-tools">
+
+                        <div class="search-box">
+
+                            <i class="fa-solid fa-magnifying-glass"></i>
+
+                            <input
+                            type="search"
+                            id="searchParticipant"
+                            placeholder="Buscar por nombre o correo">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="table-wrapper">
+
+                    <table class="participants-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Participante
+                                </th>
+
+                                <th>
+                                    Correo
+                                </th>
+
+                                <th>
+                                    Retos
+                                </th>
+
+                                <th>
+                                    Avance
+                                </th>
+
+                                <th>
+                                    Estado
+                                </th>
+
+                                <th>
+                                    Última actualización
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="participantsTableBody">
+
+                            <tr>
+
+                                <td colspan="7">
+
+                                    <div class="empty-state table-empty">
+
+                                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+                                        <p>
+                                            Cargando participantes...
+                                        </p>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+    <!-- =========================================================
+       ACCESS DENIED MODAL
+    ========================================================= -->
+
+    <div class="access-modal" id="accessModal">
+
+        <div class="access-card">
+
+            <div class="access-icon">
+
+                <i class="fa-solid fa-lock"></i>
+
+            </div>
+
+            <h2>
+                Acceso restringido
+            </h2>
+
+            <p>
+                Esta página está disponible únicamente para la supervisora autorizada.
+            </p>
+
+            <button
+            type="button"
+            onclick="window.location.href='album.html'">
+
+                Volver al álbum
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+       FIREBASE CONFIG
+    ========================================================= -->
+
+    <script
+    type="module"
+    src="firebase-config.js?v=8.2">
+    </script>
+
+    <!-- =========================================================
+       ADMIN JS
+    ========================================================= -->
+
+    <script
+    type="module"
+    src="admin-ranking.js?v=1.0">
+    </script>
+
+</body>
+
+</html>
