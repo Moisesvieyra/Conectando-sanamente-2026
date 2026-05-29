@@ -78,6 +78,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
+auth.languageCode = "es";
 
 const db = initializeFirestore(app, {
 
@@ -213,6 +214,11 @@ window.loginUser = async(email,password)=>{
             "Bienvenido a Aguakan 💧",
             "#2ecc71"
         );
+
+       showAlert(
+    `Te enviamos un correo a ${email}. Revisa tu bandeja de entrada o spam 📩`,
+    "#2ecc71"
+);
 
         setTimeout(()=>{
 
