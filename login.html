@@ -1,565 +1,500 @@
-<!-- =========================================================
-   META
-========================================================= -->
+<!DOCTYPE html>
+<html lang="es">
 
-<meta charset="UTF-8">
+<head>
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
+    <!-- =========================================================
+       META
+    ========================================================= -->
 
-<title>
-    Aguakan • Login Enterprise
-</title>
+    <meta charset="UTF-8">
 
-<!-- =========================================================
-   FONTS + ICONS
-========================================================= -->
+    <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
-<link rel="preconnect"
-href="https://fonts.googleapis.com">
+    <meta
+    name="theme-color"
+    content="#0b5aa7">
 
-<link rel="preconnect"
-href="https://fonts.gstatic.com"
-crossorigin>
+    <meta
+    name="description"
+    content="Acceso al Álbum de Bienestar de Conectando Sanamente 2026 por Aguakan.">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
-rel="stylesheet">
+    <title>
+        Aguakan • Acceso | Conectando Sanamente 2026
+    </title>
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <!-- =========================================================
+       FONTS
+    ========================================================= -->
 
-<!-- =========================================================
-   STYLES
-========================================================= -->
+    <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com">
 
-<style>
+    <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin>
 
-    /* =========================================================
-       ROOT
-    ========================================================= */
+    <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
 
-    :root{
+    <!-- =========================================================
+       ICONS
+    ========================================================= -->
 
-        --primary:#0b5aa7;
-        --primary-dark:#062b52;
-        --secondary:#20c0d8;
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        --white:#ffffff;
+    <!-- =========================================================
+       CSS LOGIN
+    ========================================================= -->
 
-        --glass:
-        rgba(255,255,255,.12);
+    <link
+    rel="stylesheet"
+    href="login.css?v=1.0">
 
-        --shadow:
-        0 25px 55px rgba(0,0,0,.18);
+</head>
 
-        --gradient:
-        linear-gradient(
-            135deg,
-            #0b5aa7,
-            #20c0d8
-        );
+<body>
 
-    }
+    <!-- =========================================================
+       BACKGROUND DECORATION
+    ========================================================= -->
 
-    /* =========================================================
-       RESET
-    ========================================================= */
+    <div class="login-bg login-bg-one"></div>
 
-    *{
-        margin:0;
-        padding:0;
-        box-sizing:border-box;
-    }
+    <div class="login-bg login-bg-two"></div>
 
-    body{
+    <div class="login-grid-bg"></div>
 
-        min-height:100vh;
+    <!-- =========================================================
+       PAGE
+    ========================================================= -->
 
-        font-family:'Poppins',sans-serif;
+    <main class="auth-page">
 
-        display:flex;
+        <!-- =========================================================
+           BRAND PANEL
+        ========================================================= -->
 
-        justify-content:center;
+        <section class="auth-brand-panel">
 
-        align-items:center;
+            <!-- TOP LOGO -->
 
-        overflow:hidden;
+            <a
+            href="index.html"
+            class="auth-brand-logo"
+            aria-label="Volver al inicio">
 
-        background:
-        linear-gradient(
-            135deg,
-            #062b52 0%,
-            #0b5aa7 40%,
-            #20c0d8 100%
-        );
+                <img
+                src="aguakan-logo.png"
+                alt="Logo Aguakan">
 
-        position:relative;
-    }
+                <div class="auth-brand-text">
 
-    /* =========================================================
-       BACKGROUND EFFECTS
-    ========================================================= */
+                    <h1>
+                        Conectando Sanamente
+                    </h1>
 
-    body::before{
+                    <p>
+                        Congreso Empresarial de Salud Mental
+                    </p>
 
-        content:'';
+                </div>
 
-        position:absolute;
+            </a>
 
-        width:700px;
-        height:700px;
+            <!-- HERO TEXT -->
 
-        background:
-        radial-gradient(
-            circle,
-            rgba(255,255,255,.18),
-            transparent 70%
-        );
+            <div class="auth-brand-content">
 
-        top:-250px;
-        right:-250px;
+                <span class="auth-kicker">
 
-        filter:blur(50px);
-    }
+                    AGUAKAN • CONGRESO 2026
 
-    body::after{
+                </span>
 
-        content:'';
+                <h2>
 
-        position:absolute;
+                    Bienvenido al
+                    <span>Álbum de Bienestar</span>
 
-        width:600px;
-        height:600px;
+                </h2>
 
-        background:
-        radial-gradient(
-            circle,
-            rgba(32,192,216,.20),
-            transparent 70%
-        );
+                <p>
 
-        bottom:-250px;
-        left:-250px;
+                    Inicia sesión para subir tus evidencias, completar tus retos diarios
+                    y participar en el ranking oficial de Conectando Sanamente 2026.
 
-        filter:blur(60px);
-    }
+                </p>
 
-    /* =========================================================
-       LOGIN CARD
-    ========================================================= */
+                <div class="auth-feature-list">
 
-    .login-container{
+                    <div class="auth-feature">
 
-        position:relative;
+                        <i class="fa-solid fa-camera-retro"></i>
 
-        z-index:10;
+                        <div>
 
-        width:100%;
+                            <strong>
+                                Evidencias diarias
+                            </strong>
 
-        max-width:430px;
+                            <small>
+                                Sube tu foto del reto correspondiente.
+                            </small>
 
-        padding:20px;
-    }
+                        </div>
 
-    .login-card{
+                    </div>
 
-        background:
-        rgba(255,255,255,.12);
+                    <div class="auth-feature">
 
-        backdrop-filter:blur(25px);
+                        <i class="fa-solid fa-ranking-star"></i>
 
-        border:
-        1px solid rgba(255,255,255,.18);
+                        <div>
 
-        border-radius:35px;
+                            <strong>
+                                Ranking en vivo
+                            </strong>
 
-        padding:50px 40px;
+                            <small>
+                                Mira tu avance frente a otros participantes.
+                            </small>
 
-        box-shadow:var(--shadow);
+                        </div>
 
-        overflow:hidden;
+                    </div>
 
-        position:relative;
-    }
+                    <div class="auth-feature">
 
-    .login-card::before{
+                        <i class="fa-solid fa-trophy"></i>
 
-        content:'';
+                        <div>
 
-        position:absolute;
+                            <strong>
+                                21 retos
+                            </strong>
 
-        inset:0;
+                            <small>
+                                Completa el álbum y conviértete en leyenda.
+                            </small>
 
-        background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,.12),
-            transparent
-        );
+                        </div>
 
-        pointer-events:none;
-    }
+                    </div>
 
-    /* =========================================================
-       LOGO
-    ========================================================= */
-
-    .logo{
-
-        display:flex;
-
-        flex-direction:column;
-
-        align-items:center;
-
-        margin-bottom:35px;
-    }
-
-    .logo-icon{
-
-        width:90px;
-        height:90px;
-
-        border-radius:30px;
-
-        background:var(--gradient);
-
-        display:flex;
-
-        justify-content:center;
-
-        align-items:center;
-
-        color:white;
-
-        font-size:2.5rem;
-
-        margin-bottom:20px;
-
-        box-shadow:
-        0 20px 40px rgba(0,0,0,.18);
-    }
-
-    .logo h1{
-
-        color:white;
-
-        font-size:2rem;
-
-        font-weight:900;
-
-        letter-spacing:-1px;
-    }
-
-    .logo p{
-
-        color:
-        rgba(255,255,255,.75);
-
-        font-size:.95rem;
-
-        margin-top:8px;
-    }
-
-    /* =========================================================
-       FORM
-    ========================================================= */
-
-    .input-group{
-
-        position:relative;
-
-        margin-bottom:22px;
-    }
-
-    .input-group i{
-
-        position:absolute;
-
-        left:18px;
-        top:50%;
-
-        transform:translateY(-50%);
-
-        color:
-        rgba(255,255,255,.7);
-
-        font-size:1rem;
-    }
-
-    .input-group input{
-
-        width:100%;
-
-        padding:
-        18px 18px 18px 55px;
-
-        border:none;
-
-        outline:none;
-
-        border-radius:18px;
-
-        background:
-        rgba(255,255,255,.10);
-
-        color:white;
-
-        font-size:1rem;
-
-        font-family:'Poppins';
-
-        border:
-        1px solid rgba(255,255,255,.12);
-
-        transition:.4s ease;
-    }
-
-    .input-group input::placeholder{
-
-        color:
-        rgba(255,255,255,.55);
-    }
-
-    .input-group input:focus{
-
-        border-color:
-        rgba(255,255,255,.35);
-
-        background:
-        rgba(255,255,255,.16);
-
-        transform:translateY(-2px);
-    }
-
-    /* =========================================================
-       BUTTONS
-    ========================================================= */
-
-    .btn{
-
-        width:100%;
-
-        padding:18px;
-
-        border:none;
-
-        border-radius:18px;
-
-        font-family:'Poppins';
-
-        font-size:1rem;
-
-        font-weight:800;
-
-        cursor:pointer;
-
-        transition:.4s ease;
-
-        margin-top:10px;
-    }
-
-    .btn-login{
-
-        background:var(--gradient);
-
-        color:white;
-
-        box-shadow:
-        0 15px 35px rgba(11,90,167,.35);
-    }
-
-    .btn-login:hover{
-
-        transform:translateY(-4px);
-
-        box-shadow:
-        0 25px 45px rgba(11,90,167,.45);
-    }
-
-    .btn-register{
-
-        background:
-        rgba(255,255,255,.12);
-
-        color:white;
-
-        border:
-        1px solid rgba(255,255,255,.15);
-    }
-
-    .btn-register:hover{
-
-        background:
-        rgba(255,255,255,.20);
-
-        transform:translateY(-4px);
-    }
-
-    /* =========================================================
-       FOOTER
-    ========================================================= */
-
-    .login-footer{
-
-        text-align:center;
-
-        margin-top:30px;
-
-        color:
-        rgba(255,255,255,.65);
-
-        font-size:.9rem;
-    }
-
-    /* =========================================================
-       RESPONSIVE
-    ========================================================= */
-
-    @media(max-width:500px){
-
-        .login-card{
-
-            padding:40px 25px;
-
-            border-radius:25px;
-        }
-
-        .logo h1{
-
-            font-size:1.6rem;
-        }
-
-    }
-
-</style>
-
-<!-- =========================================================
-   LOGIN CONTAINER
-========================================================= -->
-
-<div class="login-container">
-
-    <div class="login-card">
-
-        <!-- LOGO -->
-
-        <div class="logo">
-
-            <div class="logo-icon">
-
-                <i class="fa-solid fa-droplet"></i>
+                </div>
 
             </div>
 
-            <h1>
-                Aguakan
-            </h1>
+            <!-- DECORATIVE CARD -->
 
-            <p>
-                Conectando Sanamente 2026
-            </p>
+            <div class="auth-floating-card card-one">
 
-        </div>
+                <i class="fa-solid fa-heart-pulse"></i>
 
-        <!-- EMAIL -->
+                <div>
 
-        <div class="input-group">
+                    <strong>
+                        Bienestar
+                    </strong>
 
-            <i class="fa-solid fa-envelope"></i>
+                    <span>
+                        Desarrollo humano
+                    </span>
 
-            <input
-            type="email"
-            id="email"
-            placeholder="Correo corporativo">
+                </div>
 
-        </div>
+            </div>
 
-        <!-- PASSWORD -->
+            <div class="auth-floating-card card-two">
 
-        <div class="input-group">
+                <i class="fa-solid fa-brain"></i>
 
-            <i class="fa-solid fa-lock"></i>
+                <div>
 
-            <input
-            type="password"
-            id="password"
-            placeholder="Contraseña">
+                    <strong>
+                        Salud mental
+                    </strong>
 
-        </div>
+                    <span>
+                        Cultura sana
+                    </span>
 
-        <!-- BUTTON LOGIN -->
+                </div>
 
-        <button
-        class="btn btn-login"
-        onclick="login()">
+            </div>
 
-            <i class="fa-solid fa-right-to-bracket"></i>
-            Iniciar Sesión
+        </section>
 
-        </button>
+        <!-- =========================================================
+           LOGIN PANEL
+        ========================================================= -->
 
-        <!-- BUTTON REGISTER -->
+        <section class="auth-form-panel">
 
-        <button
-        class="btn btn-register"
-        onclick="register()">
+            <div class="auth-card">
 
-            <i class="fa-solid fa-user-plus"></i>
-            Crear Cuenta
+                <!-- MOBILE LOGO -->
 
-        </button>
+                <div class="auth-mobile-logo">
 
-        <!-- FOOTER -->
+                    <img
+                    src="aguakan-logo.png"
+                    alt="Logo Aguakan">
 
-        <div class="login-footer">
+                </div>
 
-            Plataforma Empresarial de Bienestar
+                <!-- CARD HEADER -->
 
-        </div>
+                <div class="auth-card-header">
 
-    </div>
+                    <div class="auth-icon">
 
-</div>
+                        <i class="fa-solid fa-droplet"></i>
 
-<!-- =========================================================
-   FIREBASE
-========================================================= -->
+                    </div>
 
-<script
-type="module"
-src="firebase-config.js">
-</script>
+                    <span class="auth-card-badge">
 
-<!-- =========================================================
-   FUNCTIONS
-========================================================= -->
+                        Plataforma Empresarial
 
-<script>
+                    </span>
 
-    function register(){
+                    <h2>
+                        Acceso Aguakan
+                    </h2>
 
-        const email =
-        document.getElementById("email").value;
+                    <p>
+                        Ingresa con tu correo y contraseña para continuar.
+                    </p>
 
-        const password =
-        document.getElementById("password").value;
+                </div>
 
-        registerUser(email,password);
+                <!-- FORM -->
 
-    }
+                <form
+                class="auth-form"
+                id="loginForm"
+                onsubmit="login(); return false;">
 
-    function login(){
+                    <!-- EMAIL -->
 
-        const email =
-        document.getElementById("email").value;
+                    <div class="auth-input-group">
 
-        const password =
-        document.getElementById("password").value;
+                        <label for="email">
+                            Correo electrónico
+                        </label>
 
-        loginUser(email,password);
+                        <div class="auth-input-box">
 
-    }
+                            <i class="fa-solid fa-envelope"></i>
 
-</script>
+                            <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="correo@empresa.com"
+                            autocomplete="email"
+                            required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PASSWORD -->
+
+                    <div class="auth-input-group">
+
+                        <label for="password">
+                            Contraseña
+                        </label>
+
+                        <div class="auth-input-box">
+
+                            <i class="fa-solid fa-lock"></i>
+
+                            <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Ingresa tu contraseña"
+                            autocomplete="current-password"
+                            required>
+
+                        </div>
+
+                    </div>
+
+                    <!-- OPTIONS -->
+
+                    <div class="auth-options">
+
+                        <label class="remember-option">
+
+                            <input
+                            type="checkbox"
+                            id="rememberUser">
+
+                            <span>
+                                Recordarme
+                            </span>
+
+                        </label>
+
+                        <button
+                        type="button"
+                        class="forgot-link"
+                        onclick="resetPassword()">
+
+                            ¿Olvidaste tu contraseña?
+
+                        </button>
+
+                    </div>
+
+                    <!-- LOGIN BUTTON -->
+
+                    <button
+                    type="submit"
+                    class="auth-btn auth-btn-primary">
+
+                        <i class="fa-solid fa-right-to-bracket"></i>
+
+                        Iniciar sesión
+
+                    </button>
+
+                    <!-- DIVIDER -->
+
+                    <div class="auth-divider">
+
+                        <span>
+                            o crea tu cuenta
+                        </span>
+
+                    </div>
+
+                    <!-- REGISTER BUTTON -->
+
+                    <button
+                    type="button"
+                    class="auth-btn auth-btn-secondary"
+                    onclick="register()">
+
+                        <i class="fa-solid fa-user-plus"></i>
+
+                        Crear cuenta
+
+                    </button>
+
+                </form>
+
+                <!-- FOOTER -->
+
+                <div class="auth-card-footer">
+
+                    <a href="index.html">
+
+                        <i class="fa-solid fa-arrow-left"></i>
+
+                        Volver al inicio
+
+                    </a>
+
+                    <p>
+                        Conectando Sanamente 2026
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- =========================================================
+       FIREBASE CONFIG
+    ========================================================= -->
+
+    <script
+    type="module"
+    src="firebase-config.js?v=8.0">
+    </script>
+
+    <!-- =========================================================
+       AUTH FUNCTIONS
+    ========================================================= -->
+
+    <script>
+
+        function getAuthEmail(){
+
+            const emailInput =
+            document.getElementById("email");
+
+            return emailInput
+            ? emailInput.value.trim()
+            : "";
+
+        }
+
+        function getAuthPassword(){
+
+            const passwordInput =
+            document.getElementById("password");
+
+            return passwordInput
+            ? passwordInput.value.trim()
+            : "";
+
+        }
+
+        function register(){
+
+            const email = getAuthEmail();
+
+            const password = getAuthPassword();
+
+            if(typeof registerUser === "function"){
+
+                registerUser(email,password);
+
+            }else{
+
+                alert("El sistema de registro aún no está disponible.");
+
+            }
+
+        }
+
+        function login(){
+
+            const email = getAuthEmail();
+
+            const password = getAuthPassword();
+
+            if(typeof loginUser === "function"){
+
+                loginUser(email,password);
+
+            }else{
+
+                alert("El sistema de inicio de sesión aún no está disponible.");
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
