@@ -4337,3 +4337,242 @@ footer::before{
     }
 
 }
+
+/* =========================================================
+   AGENDA DAY 18 PREMIUM FIX
+   Corrige tarjetas angostas / rotas en timeline
+========================================================= */
+
+#agenda-18 .timeline{
+    max-width:1050px;
+    margin:0 auto;
+    padding:0 24px;
+    position:relative;
+}
+
+#agenda-18 .timeline::before{
+    left:50%;
+    width:4px;
+    background:linear-gradient(
+        180deg,
+        rgba(11,90,167,.08),
+        rgba(32,192,216,.35),
+        rgba(11,90,167,.08)
+    );
+    border-radius:999px;
+}
+
+#agenda-18 .timeline-item{
+    width:100%;
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:58px;
+    position:relative;
+}
+
+#agenda-18 .timeline-item:nth-child(even){
+    justify-content:flex-start;
+}
+
+#agenda-18 .timeline-box{
+    width:46%;
+    min-width:360px;
+    max-width:480px;
+
+    padding:34px 34px 30px;
+    border-radius:28px;
+
+    background:rgba(255,255,255,.96);
+    border:1px solid rgba(11,90,167,.08);
+
+    box-shadow:
+        0 20px 55px rgba(6,43,82,.10),
+        inset 0 1px 0 rgba(255,255,255,.85);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    overflow:visible;
+}
+
+#agenda-18 .timeline-box h3{
+    font-size:1.28rem;
+    line-height:1.35;
+    color:#062b52;
+    font-weight:900;
+    margin-bottom:16px;
+
+    word-break:normal;
+    overflow-wrap:normal;
+    hyphens:none;
+}
+
+#agenda-18 .timeline-box p{
+    font-size:.9rem;
+    line-height:1.65;
+    color:#64748b;
+    font-weight:600;
+
+    word-break:normal;
+    overflow-wrap:break-word;
+    hyphens:none;
+}
+
+#agenda-18 .timeline-hour{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    margin-bottom:18px;
+    padding:9px 17px;
+
+    border-radius:999px;
+
+    background:linear-gradient(135deg,#0b5aa7,#1284c8);
+    color:#ffffff;
+
+    font-size:.74rem;
+    font-weight:900;
+    letter-spacing:.2px;
+
+    white-space:nowrap;
+}
+
+#agenda-18 .card-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+
+    margin-top:22px;
+    padding-top:20px;
+
+    border-top:1px solid rgba(11,90,167,.08);
+}
+
+#agenda-18 .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+
+    color:#0b5aa7;
+    font-size:.78rem;
+    font-weight:900;
+
+    white-space:nowrap;
+}
+
+#agenda-18 .mini-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    min-height:42px;
+    padding:11px 18px;
+
+    border-radius:14px;
+
+    background:#eef8ff;
+    color:#0b5aa7;
+
+    font-size:.78rem;
+    font-weight:900;
+
+    white-space:nowrap;
+}
+
+/* Tablet y celular: timeline en una sola columna */
+@media(max-width:900px){
+
+    #agenda-18 .timeline{
+        max-width:100%;
+        padding:0 16px 0 28px;
+    }
+
+    #agenda-18 .timeline::before{
+        left:18px;
+    }
+
+    #agenda-18 .timeline-item,
+    #agenda-18 .timeline-item:nth-child(even){
+        justify-content:flex-start;
+        margin-bottom:28px;
+    }
+
+    #agenda-18 .timeline-box{
+        width:100%;
+        min-width:0;
+        max-width:none;
+
+        margin-left:28px;
+        padding:28px 24px;
+
+        border-radius:24px;
+    }
+
+    #agenda-18 .timeline-box::before,
+    #agenda-18 .timeline-item:nth-child(even) .timeline-box::before{
+        left:-13px;
+        right:auto;
+
+        border-right:none;
+        border-top:none;
+        border-left:1px solid rgba(11,90,167,.08);
+        border-bottom:1px solid rgba(11,90,167,.08);
+    }
+
+    #agenda-18 .timeline-box h3{
+        font-size:1.12rem;
+        line-height:1.4;
+    }
+
+    #agenda-18 .timeline-box p{
+        font-size:.86rem;
+    }
+
+}
+
+/* Celular pequeño */
+@media(max-width:520px){
+
+    #agenda-18 .timeline{
+        padding:0 10px 0 18px;
+    }
+
+    #agenda-18 .timeline::before{
+        left:10px;
+    }
+
+    #agenda-18 .timeline-box{
+        margin-left:20px;
+        padding:24px 20px;
+        border-radius:22px;
+    }
+
+    #agenda-18 .timeline-hour{
+        width:auto;
+        max-width:100%;
+
+        font-size:.68rem;
+        padding:8px 13px;
+        white-space:normal;
+        text-align:center;
+    }
+
+    #agenda-18 .timeline-box h3{
+        font-size:1.02rem;
+    }
+
+    #agenda-18 .card-footer{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    #agenda-18 .badge,
+    #agenda-18 .mini-btn{
+        width:100%;
+        justify-content:center;
+    }
+
+}
