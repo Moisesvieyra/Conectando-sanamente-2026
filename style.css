@@ -3047,3 +3047,103 @@ footer{
     }
 
 }
+/* =========================================================
+   REGISTER BUTTON DESKTOP / MOBILE FIX
+========================================================= */
+
+.nav-container{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:28px;
+}
+
+.logo{
+    flex-shrink:0;
+}
+
+.menu{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:28px;
+}
+
+.nav-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:14px;
+    flex-shrink:0;
+}
+
+.desktop-register-btn{
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+
+    min-width:165px;
+    height:58px;
+    padding:0 30px;
+
+    border-radius:22px;
+    border:none;
+
+    background:linear-gradient(135deg,#0b5aa7,#20c0d8);
+    color:#ffffff !important;
+
+    font-weight:900;
+    font-size:1rem;
+
+    box-shadow:0 16px 35px rgba(11,90,167,.24);
+    text-decoration:none;
+    white-space:nowrap;
+}
+
+.mobile-register-btn{
+    display:none;
+}
+
+/* MOBILE */
+@media(max-width:1080px){
+
+    .nav-container{
+        justify-content:space-between;
+    }
+
+    .menu{
+        flex:none;
+    }
+
+    .desktop-register-btn{
+        display:none !important;
+    }
+
+    .mobile-register-btn{
+        display:flex !important;
+        align-items:center;
+        justify-content:center;
+        gap:10px;
+
+        width:100%;
+        margin-top:10px;
+        padding:18px 22px;
+
+        border-radius:18px;
+
+        background:linear-gradient(135deg,#0b5aa7,#20c0d8);
+        color:#ffffff !important;
+
+        font-weight:900;
+        font-size:1rem;
+
+        box-shadow:0 16px 35px rgba(11,90,167,.24);
+    }
+
+    .mobile-register-btn i{
+        color:#ffffff;
+        font-size:1rem;
+    }
+
+}
