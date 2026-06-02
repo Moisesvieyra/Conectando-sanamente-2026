@@ -4110,3 +4110,230 @@ footer::before{
    END OF PREMIUM STYLE
 ========================================================= */
 
+
+/* =========================================================
+   NAVBAR FINAL PREMIUM ALIGNMENT FIX
+   Corrige botón Registrarse caído en desktop
+========================================================= */
+
+@media(min-width:1081px){
+
+    #navbar{
+        padding:18px 0;
+    }
+
+    #navbar.scrolled{
+        padding:12px 0;
+    }
+
+    .nav-container{
+        width:100%;
+        max-width:1720px;
+        margin:0 auto;
+        padding:0 64px;
+
+        display:grid !important;
+        grid-template-columns:minmax(330px,420px) minmax(620px,1fr) minmax(170px,210px);
+        align-items:center;
+        column-gap:28px;
+    }
+
+    .logo{
+        grid-column:1;
+        justify-self:start;
+        min-width:0;
+    }
+
+    .logo img{
+        height:56px;
+        width:auto;
+        object-fit:contain;
+    }
+
+    .logo-text h2{
+        font-size:1.32rem;
+        line-height:1.05;
+        white-space:normal;
+    }
+
+    .logo-text span{
+        font-size:.82rem;
+        line-height:1.35;
+        max-width:260px;
+    }
+
+    .menu{
+        grid-column:2;
+        width:100%;
+
+        display:flex !important;
+        align-items:center;
+        justify-content:center;
+        gap:clamp(16px,1.35vw,30px);
+
+        flex:none !important;
+        min-width:0;
+        position:static;
+        opacity:1;
+        visibility:visible;
+        pointer-events:auto;
+        transform:none;
+        background:transparent;
+        box-shadow:none;
+        border:none;
+        padding:0;
+    }
+
+    .menu a{
+        font-size:clamp(.86rem,.88vw,.98rem);
+        font-weight:800;
+        white-space:nowrap;
+    }
+
+    .nav-actions{
+        grid-column:3;
+        justify-self:end;
+        align-self:center;
+
+        display:flex !important;
+        align-items:center;
+        justify-content:flex-end;
+
+        width:auto;
+        min-width:0;
+        gap:14px;
+        position:static;
+        transform:none;
+    }
+
+    .desktop-register-btn{
+        display:inline-flex !important;
+        align-items:center;
+        justify-content:center;
+
+        width:180px;
+        min-width:180px;
+        height:60px;
+        padding:0 28px;
+        margin:0;
+
+        border-radius:22px;
+        border:none;
+
+        background:linear-gradient(135deg,#0b5aa7,#20c0d8);
+        color:#ffffff !important;
+
+        font-size:1rem;
+        font-weight:900;
+        line-height:1;
+
+        text-decoration:none;
+        white-space:nowrap;
+
+        box-shadow:0 16px 35px rgba(11,90,167,.24);
+
+        transform:none !important;
+    }
+
+    .desktop-register-btn:hover{
+        transform:translateY(-3px) !important;
+        box-shadow:0 20px 45px rgba(11,90,167,.34);
+    }
+
+    .mobile-register-btn{
+        display:none !important;
+    }
+
+    .menu-toggle{
+        display:none !important;
+    }
+
+}
+
+/* Ajuste para laptops medianas */
+@media(min-width:1081px) and (max-width:1450px){
+
+    .nav-container{
+        max-width:1320px;
+        padding:0 34px;
+        grid-template-columns:minmax(270px,330px) minmax(570px,1fr) minmax(150px,170px);
+        column-gap:18px;
+    }
+
+    .logo img{
+        height:50px;
+    }
+
+    .logo-text h2{
+        font-size:1.12rem;
+    }
+
+    .logo-text span{
+        font-size:.74rem;
+        max-width:210px;
+    }
+
+    .menu{
+        gap:16px;
+    }
+
+    .menu a{
+        font-size:.84rem;
+    }
+
+    .desktop-register-btn{
+        width:155px;
+        min-width:155px;
+        height:54px;
+        font-size:.9rem;
+        border-radius:20px;
+        padding:0 20px;
+    }
+
+}
+
+/* Mobile conserva hamburguesa y mete registro dentro del menú */
+@media(max-width:1080px){
+
+    .nav-container{
+        display:flex !important;
+        align-items:center;
+        justify-content:space-between;
+        gap:14px;
+    }
+
+    .desktop-register-btn{
+        display:none !important;
+    }
+
+    .menu-toggle{
+        display:flex !important;
+    }
+
+    .mobile-register-btn{
+        display:flex !important;
+        align-items:center;
+        justify-content:center;
+        gap:10px;
+
+        width:100%;
+        margin-top:10px;
+        padding:18px 22px;
+
+        border-radius:18px;
+
+        background:linear-gradient(135deg,#0b5aa7,#20c0d8);
+        color:#ffffff !important;
+
+        font-weight:900;
+        font-size:1rem;
+
+        box-shadow:0 16px 35px rgba(11,90,167,.24);
+    }
+
+    .mobile-register-btn i{
+        color:#ffffff;
+        font-size:1rem;
+    }
+
+}
