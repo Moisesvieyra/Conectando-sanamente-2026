@@ -16,6 +16,16 @@
     <meta 
     name="description" 
     content="Conectando Sanamente 2026 - Congreso Empresarial de Salud Mental">
+    <meta name="theme-color" content="#0b5aa7">
+
+    <meta property="og:title" content="Conectando Sanamente | Aguakan 2026">
+
+    <meta property="og:description" content="Congreso Empresarial de Salud Mental, bienestar emocional y desarrollo humano.">
+
+    <meta property="og:type" content="website">
+
+    <meta property="og:image" content="logo-sanamente.png">
+
 
     <title>
         Conectando Sanamente | Aguakan 2026
@@ -46,11 +56,13 @@
     <!-- CSS -->
     <!-- ========================================= -->
 
-    <link rel="stylesheet" href="style.css?v=3.1">
+    <link rel="stylesheet" href="style.css?v=4.2">
 
 </head>
 
 <body>
+
+    <a href="#inicio" class="skip-link">Saltar al contenido principal</a>
 
     <!-- ========================================= -->
     <!-- LOADER -->
@@ -92,7 +104,7 @@
 
             <!-- LOGO -->
 
-            <a href="#inicio" class="logo">
+            <a href="#inicio" class="logo" aria-label="Ir al inicio de Conectando Sanamente">
 
                 <img 
                 src="aguakan-logo.png" 
@@ -114,68 +126,67 @@
 
             <!-- MENU -->
 
-<div class="menu" id="menu">
+            <div class="menu" id="menu">
 
-    <a href="login.html">
-        Ir al Álbum
-    </a>
+                <a href="login.html">
+                    Ir al Álbum
+                </a>
 
-    <a href="#inicio">
-        Inicio
-    </a>
+                <a href="#inicio">
+                    Inicio
+                </a>
 
-    <a href="#ponencias">
-        Ponencias
-    </a>
+                <a href="#ponencias">
+                    Ponencias
+                </a>
 
-    <a href="#agenda">
-        Agenda
-    </a>
+                <a href="#agenda">
+                    Agenda
+                </a>
 
-    <a href="#bienestar">
-        Bienestar
-    </a>
+                <a href="#bienestar">
+                    Bienestar
+                </a>
 
-    <a href="#speakers">
-        Speakers
-    </a>
+                <a href="#speakers">
+                    Speakers
+                </a>
 
-    <a href="#faq">
-        FAQ
-    </a>
-    
-    <a href="#podcasts">
-        Podcasts
-    </a>
+                <a href="#faq">
+                    FAQ
+                </a>
 
-    <a href="login.html" class="mobile-register-btn">
-        <i class="fa-solid fa-user-plus"></i>
-        Registrarse
-    </a>
+                <a href="#podcasts">
+                    Podcasts
+                </a>
 
-</div>
+                <a href="login.html" class="mobile-register-btn">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Registrarse
+                </a>
 
             </div>
 
             <!-- ACTIONS -->
 
-<div class="nav-actions">
+            <div class="nav-actions">
 
-    <a href="login.html" class="nav-btn desktop-register-btn">
-        Registrarse
-    </a>
+                <a href="login.html" class="nav-btn desktop-register-btn">
+                    Registrarse
+                </a>
 
-    <button 
-        class="menu-toggle" 
-        id="menuToggle"
-        type="button"
-        aria-label="Abrir menú">
+                <button 
+                    class="menu-toggle" 
+                    id="menuToggle"
+                    type="button"
+                    aria-label="Abrir menú"
+                    aria-expanded="false">
 
-        <i class="fa-solid fa-bars"></i>
+                    <i class="fa-solid fa-bars"></i>
 
-    </button>
+                </button>
 
-</div>
+            </div>
 
         </div>
 
@@ -1054,6 +1065,47 @@
 
     <div class="cards">
 
+        <!-- CARD 0 -->
+
+        <article class="card reveal premium-feature-card">
+
+            <div class="card-top"></div>
+
+            <div class="card-content">
+
+                <div class="card-category">
+                    Estrés Laboral
+                </div>
+
+                <h3>
+                    Estrategias rápidas para manejar el estrés laboral
+                </h3>
+
+                <p>
+                    <strong>Ponente:</strong>
+                    Mtra. Estefany Magdalena Fuentes Souberbielle
+                    <br>
+                    Herramientas prácticas para identificar, gestionar y reducir el estrés laboral, favoreciendo el bienestar emocional y el desempeño en el trabajo.
+                </p>
+
+                <div class="card-footer">
+
+                    <span class="badge">
+                        <i class="fa-regular fa-clock"></i>
+                        09:00 AM
+                    </span>
+
+                    <a href="#agenda-18"
+                       class="mini-btn">
+                        Ver agenda
+                    </a>
+
+                </div>
+
+            </div>
+
+        </article>
+
         <!-- CARD 1 -->
 
         <article class="card reveal">
@@ -1261,6 +1313,47 @@
                        class="mini-btn">
 
                         Ver Perfil
+                    </a>
+
+                </div>
+
+            </div>
+
+        </article>
+
+        <!-- CARD 6 -->
+
+        <article class="card reveal premium-feature-card">
+
+            <div class="card-top"></div>
+
+            <div class="card-content">
+
+                <div class="card-category">
+                    Alimentación Emocional
+                </div>
+
+                <h3>
+                    Alimentación emocional: ¿Comemos por ansiedad?
+                </h3>
+
+                <p>
+                    <strong>Ponente:</strong>
+                    Mtra. Gabriela Calderón Jiménez
+                    <br>
+                    Identifica la relación entre emociones y hábitos alimenticios, brindando estrategias para gestionar la alimentación emocional de manera saludable.
+                </p>
+
+                <div class="card-footer">
+
+                    <span class="badge">
+                        <i class="fa-regular fa-clock"></i>
+                        03:00 PM
+                    </span>
+
+                    <a href="#agenda-18"
+                       class="mini-btn">
+                        Ver agenda
                     </a>
 
                 </div>
@@ -1712,6 +1805,50 @@
 
         <!-- ITEM -->
 
+        <div class="timeline-item reveal">
+            <div class="timeline-box">
+
+                <span class="timeline-hour">
+                    09:00 AM - 09:50 AM
+                </span>
+
+                <h3>
+                    Estrategias rápidas para manejar el estrés laboral
+                </h3>
+
+                <p>
+                    <strong>Ponente:</strong>
+                    Mtra. Estefany Magdalena Fuentes Souberbielle
+                </p>
+
+                <p>
+                    <strong>Duración:</strong>
+                    50 minutos
+                </p>
+
+                <p>
+                    Brindar herramientas prácticas y de aplicación inmediata para identificar, gestionar y reducir el estrés laboral, favoreciendo el bienestar emocional y el desempeño en el trabajo.
+                </p>
+
+                <div class="card-footer">
+
+                    <div class="badge">
+                        <i class="fa-solid fa-location-dot"></i>
+                        Presencial
+                    </div>
+
+                    <a href="#ponencia-18"
+                       class="mini-btn">
+                        Ver ponencia
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ITEM -->
+
         <div class="timeline-item">
             <div class="timeline-box">
 
@@ -1937,6 +2074,50 @@
 
                 </div>
 
+        <!-- ITEM -->
+
+        <div class="timeline-item reveal">
+            <div class="timeline-box">
+
+                <span class="timeline-hour">
+                    03:00 PM - 03:50 PM
+                </span>
+
+                <h3>
+                    Alimentación emocional: ¿Comemos por ansiedad?
+                </h3>
+
+                <p>
+                    <strong>Ponente:</strong>
+                    Mtra. Gabriela Calderón Jiménez
+                </p>
+
+                <p>
+                    <strong>Duración:</strong>
+                    50 minutos
+                </p>
+
+                <p>
+                    Identificar la relación entre las emociones y los hábitos alimenticios, brindando estrategias para reconocer y gestionar la alimentación emocional de manera saludable.
+                </p>
+
+                <div class="card-footer">
+
+                    <div class="badge">
+                        <i class="fa-solid fa-location-dot"></i>
+                        Presencial
+                    </div>
+
+                    <a href="#ponencia-18"
+                       class="mini-btn">
+                        Ver ponencia
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
             </div>
         </div>
 
@@ -2051,11 +2232,11 @@
 
                 <div class="cta-buttons">
 
-                    <button class="cta-btn">
+                    <a href="login.html" class="cta-btn">
 
                         Registrarme Ahora
 
-                    </button>
+                    </a>
 
                 <button class="btn-secondary info-btn">
 
@@ -2322,7 +2503,7 @@
 <!-- JAVASCRIPT ÚNICO -->
 <!-- ========================================= -->
 
-<script src="script.js?v=3.1"></script>
+<script src="script.js?v=3.2"></script>
 
 </body>
 
