@@ -2999,3 +2999,51 @@ footer{
   }
 
 }
+
+/* =========================================================
+   REGISTER BUTTON RESPONSIVE FIX
+========================================================= */
+
+.mobile-register-btn{
+    display:none;
+}
+
+.desktop-register-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+}
+
+@media(max-width:1080px){
+
+    .desktop-register-btn{
+        display:none !important;
+    }
+
+    .mobile-register-btn{
+        display:flex !important;
+        align-items:center;
+        justify-content:center;
+        gap:10px;
+
+        width:100%;
+        margin-top:10px;
+        padding:18px 22px;
+
+        border-radius:18px;
+
+        background:linear-gradient(135deg,#0b5aa7,#20c0d8);
+        color:#ffffff !important;
+
+        font-weight:900;
+        font-size:1rem;
+
+        box-shadow:0 16px 35px rgba(11,90,167,.24);
+    }
+
+    .mobile-register-btn i{
+        color:#ffffff;
+        font-size:1rem;
+    }
+
+}
