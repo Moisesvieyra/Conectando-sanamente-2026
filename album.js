@@ -73,7 +73,7 @@ let rankingUnsubscribe = null;
     - Fecha de hace 4 días = Día 1 al Día 5 desbloqueados.
 */
 
-const challengeStartDate = new Date("2026-05-22T00:00:00");
+const challengeStartDate = new Date("2026-06-22T00:00:00");
 
 function getCurrentChallengeDay(){
 
