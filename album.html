@@ -205,6 +205,16 @@
 
                 </button>
 
+                <button 
+                    class="delete-evidence-open-btn" 
+                    type="button"
+                    onclick="openDeleteEvidenceModal()">
+
+                    <i class="fa-solid fa-trash-can"></i>
+                    Borrar evidencia
+
+                </button>
+
             </div>
 
             <!-- ========================================= -->
@@ -1016,6 +1026,118 @@
         </section>
 
     </main>
+
+
+    <!-- ========================================= -->
+    <!-- MODAL BORRAR EVIDENCIA -->
+    <!-- ========================================= -->
+
+    <div class="delete-evidence-modal" id="deleteEvidenceModal">
+
+        <div class="delete-evidence-card">
+
+            <button 
+                type="button"
+                class="delete-evidence-close"
+                onclick="closeDeleteEvidenceModal()"
+                aria-label="Cerrar ventana para borrar evidencia">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+            <div class="delete-evidence-icon">
+
+                <i class="fa-solid fa-trash-can"></i>
+
+            </div>
+
+            <h2>
+
+                Borrar evidencia
+
+            </h2>
+
+            <p>
+
+                Selecciona el día de la evidencia que deseas eliminar.
+                Esta acción borrará la imagen y actualizará tu progreso.
+
+            </p>
+
+            <label for="deleteDaySelect">
+
+                Día a borrar
+
+            </label>
+
+            <select id="deleteDaySelect">
+
+                <option value="">
+                    Selecciona un día
+                </option>
+
+                <option value="1">Día 1</option>
+                <option value="2">Día 2</option>
+                <option value="3">Día 3</option>
+                <option value="4">Día 4</option>
+                <option value="5">Día 5</option>
+                <option value="6">Día 6</option>
+                <option value="7">Día 7</option>
+                <option value="8">Día 8</option>
+                <option value="9">Día 9</option>
+                <option value="10">Día 10</option>
+                <option value="11">Día 11</option>
+                <option value="12">Día 12</option>
+                <option value="13">Día 13</option>
+                <option value="14">Día 14</option>
+                <option value="15">Día 15</option>
+                <option value="16">Día 16</option>
+                <option value="17">Día 17</option>
+                <option value="18">Día 18</option>
+                <option value="19">Día 19</option>
+                <option value="20">Día 20</option>
+                <option value="21">Día 21</option>
+
+            </select>
+
+            <div class="delete-evidence-warning">
+
+                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                <span>
+
+                    Esta acción no se puede deshacer.
+
+                </span>
+
+            </div>
+
+            <div class="delete-evidence-actions">
+
+                <button 
+                    type="button"
+                    class="cancel-delete-btn"
+                    onclick="closeDeleteEvidenceModal()">
+
+                    Cancelar
+
+                </button>
+
+                <button 
+                    type="button"
+                    class="confirm-delete-btn"
+                    onclick="deleteEvidenceByDay()">
+
+                    Borrar evidencia
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
 
     <!-- ========================================= -->
     <!-- MODAL PREVIEW -->
