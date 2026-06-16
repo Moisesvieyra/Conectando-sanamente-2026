@@ -2,6 +2,7 @@
 /* AGUAKAN ALBUM ENGINE V7 */
 /* CONECTANDO SANAMENTE 2026 */
 /* STORAGE + REALTIME RANKING */
+/* DELETE OWN EVIDENCE ENABLED */
 /* ========================================= */
 
 import { auth, storage, realtimeDB } from "./firebase-config.js";
@@ -13,13 +14,15 @@ import {
 import {
     ref,
     uploadBytes,
-    getDownloadURL
+    getDownloadURL,
+    deleteObject
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 import {
     ref as realtimeRef,
     update as realtimeUpdate,
     get as realtimeGet,
+    remove as realtimeRemove,
     onValue
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -31,7 +34,7 @@ STATUS   : ONLINE
 MODE     : PREMIUM EXPERIENCE
 STORAGE  : CONNECTED
 RANKING  : REALTIME DATABASE
-VERSION  : V7 REALTIME RANKING
+VERSION  : V7.1 DELETE OWN EVIDENCE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 `);
@@ -305,7 +308,7 @@ async function loadAlbum(user){
 
     /* ========================================= */
     /* 3. RESPALDO DESDE STORAGE */
-    /* Solo revisa días desbloqueados para evitar tantos 404
+    /* Solo revisa días desbloqueados para evitar tantos 404 */
     /* ========================================= */
 
     await Promise.all(
@@ -479,6 +482,47 @@ function renderStickerImage(slot, imageUrl, animate = true){
 }
 
 /* ========================================= */
+/* RESET SLOT AFTER DELETE */
+/* ========================================= */
+
+function resetSlotToDefault(day){
+
+    const slot = document.querySelector(
+        `.album-slot[data-day="${day}"]`
+    );
+
+    if(!slot) return;
+
+    const image = slot.querySelector(".slot-image img");
+
+    if(image){
+
+        image.classList.remove("uploaded-image");
+
+        image.style.transition = "none";
+        image.style.display = "block";
+        image.style.visibility = "visible";
+        image.style.opacity = "1";
+        image.style.transform = "scale(1)";
+        image.style.filter = "none";
+
+        image.src = `img/reto${day}.png`;
+
+    }
+
+    slot.dataset.completed = "";
+    slot.classList.remove("completed");
+    slot.classList.remove("uploading");
+
+    const input = slot.querySelector(".file-input");
+
+    if(input){
+        input.value = "";
+    }
+
+}
+
+/* ========================================= */
 /* REALTIME DATABASE SAVE */
 /* ========================================= */
 
@@ -553,6 +597,233 @@ async function saveDayRankingRealtime(user, day, imageUrl){
     );
 
 }
+
+/* ========================================= */
+/* DELETE OWN EVIDENCE SYSTEM */
+/* ========================================= */
+
+window.openDeleteEvidenceModal = function(){
+
+    const modal = document.getElementById("deleteEvidenceModal");
+
+    if(modal){
+
+        modal.classList.add("active");
+
+    }
+
+};
+
+window.closeDeleteEvidenceModal = function(){
+
+    const modal = document.getElementById("deleteEvidenceModal");
+
+    if(modal){
+
+        modal.classList.remove("active");
+
+    }
+
+    const select = document.getElementById("deleteDaySelect");
+
+    if(select){
+
+        select.value = "";
+
+    }
+
+};
+
+window.deleteEvidenceByDay = async function(){
+
+    const select = document.getElementById("deleteDaySelect");
+
+    if(!select){
+
+        alert("No se encontró el selector de día.");
+
+        return;
+
+    }
+
+    const day = Number(select.value);
+
+    if(!day){
+
+        alert("Selecciona el día que deseas borrar.");
+
+        return;
+
+    }
+
+    const user = auth.currentUser;
+
+    if(!user){
+
+        alert("Debes iniciar sesión para borrar tu evidencia.");
+
+        window.location.href = "login.html";
+
+        return;
+
+    }
+
+    const slot = document.querySelector(
+        `.album-slot[data-day="${day}"]`
+    );
+
+    if(!slot){
+
+        alert("No se encontró el reto seleccionado.");
+
+        return;
+
+    }
+
+    const isCompleted = slot.dataset.completed === "true";
+
+    if(!isCompleted){
+
+        alert(`El día ${day} no tiene evidencia cargada.`);
+
+        return;
+
+    }
+
+    const confirmDelete = confirm(
+        `¿Seguro que deseas borrar la evidencia del día ${day}? Esta acción no se puede deshacer.`
+    );
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+    try{
+
+        const uid = user.uid;
+
+        const deleteButton = document.querySelector(".confirm-delete-btn");
+
+        if(deleteButton){
+
+            deleteButton.disabled = true;
+            deleteButton.innerHTML = `
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                Borrando...
+            `;
+
+        }
+
+        /* ========================================= */
+        /* 1. BORRAR IMAGEN DE STORAGE */
+        /* ========================================= */
+
+        const imagePath = `usuarios/${uid}/dia-${day}.jpg`;
+
+        const imageRef = ref(
+            storage,
+            imagePath
+        );
+
+        try{
+
+            await deleteObject(imageRef);
+
+            console.log(
+                `✅ Imagen del día ${day} eliminada de Storage`
+            );
+
+        }catch(storageError){
+
+            console.warn(
+                `⚠️ No se pudo borrar la imagen del día ${day} en Storage. Puede que ya no exista.`,
+                storageError
+            );
+
+        }
+
+        /* ========================================= */
+        /* 2. BORRAR DÍA EN REALTIME DATABASE */
+        /* ========================================= */
+
+        const rankingDayRef = realtimeRef(
+            realtimeDB,
+            `ranking/${uid}/days/day${day}`
+        );
+
+        await realtimeRemove(rankingDayRef);
+
+        console.log(
+            `✅ Día ${day} eliminado de Realtime Database`
+        );
+
+        /* ========================================= */
+        /* 3. BORRAR LOCALSTORAGE */
+        /* ========================================= */
+
+        localStorage.removeItem(
+            `${uid}-day-${day}`
+        );
+
+        /* ========================================= */
+        /* 4. LIMPIAR TARJETA VISUAL */
+        /* ========================================= */
+
+        resetSlotToDefault(day);
+
+        /* ========================================= */
+        /* 5. RECALCULAR PROGRESO */
+        /* ========================================= */
+
+        const progress = getCompletedDaysData();
+
+        completed = progress.count;
+
+        updateProgress();
+
+        applyDailyLocks();
+
+        /* ========================================= */
+        /* 6. ACTUALIZAR RANKING COMPLETO */
+        /* ========================================= */
+
+        await saveFullRankingRealtime(user);
+
+        alert(
+            `La evidencia del día ${day} fue eliminada correctamente.`
+        );
+
+        window.closeDeleteEvidenceModal();
+
+    }catch(error){
+
+        console.error(
+            "❌ Error eliminando evidencia:",
+            error
+        );
+
+        alert(
+            `No se pudo borrar la evidencia: ${error.code || error.message}`
+        );
+
+    }finally{
+
+        const deleteButton = document.querySelector(".confirm-delete-btn");
+
+        if(deleteButton){
+
+            deleteButton.disabled = false;
+            deleteButton.innerHTML = `
+                Borrar evidencia
+            `;
+
+        }
+
+    }
+
+};
 
 /* ========================================= */
 /* RANKING SYSTEM - REALTIME */
@@ -1066,6 +1337,26 @@ if(previewModal){
 
         if(e.target === previewModal){
             previewModal.style.display = "none";
+        }
+
+    });
+
+}
+
+/* ========================================= */
+/* DELETE MODAL CLOSE BY BACKDROP */
+/* ========================================= */
+
+const deleteEvidenceModal = document.getElementById("deleteEvidenceModal");
+
+if(deleteEvidenceModal){
+
+    deleteEvidenceModal.addEventListener("click", (e) => {
+
+        if(e.target === deleteEvidenceModal){
+
+            window.closeDeleteEvidenceModal();
+
         }
 
     });
