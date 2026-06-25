@@ -26,7 +26,7 @@
 
     <!-- CSS -->
 
-    <link rel="stylesheet" href="album.css?v=7.2">
+    <link rel="stylesheet" href="album.css?v=8.0">
 
 </head>
 
@@ -200,7 +200,7 @@
 
 <div class="album-top-actions">
 
-    <button class="premium-btn" type="button">
+    <button class="premium-btn" id="rankingButton" type="button">
 
         <i class="fa-solid fa-ranking-star"></i>
         Ver Ranking
@@ -214,6 +214,17 @@
 
         <i class="fa-solid fa-trash-can"></i>
         <span>Borrar evidencia</span>
+
+    </button>
+
+    <button 
+        class="admin-review-open-btn admin-only"
+        id="adminReviewShortcut"
+        type="button"
+        hidden>
+
+        <i class="fa-solid fa-shield-heart"></i>
+        <span>Revisar evidencias</span>
 
     </button>
 
@@ -1029,6 +1040,224 @@
 
         </section>
 
+        <!-- ========================================= -->
+        <!-- PANEL ESPECIAL DE REVISIÓN DE EVIDENCIAS -->
+        <!-- Visible únicamente para correos autorizados -->
+        <!-- ========================================= -->
+
+        <section class="admin-review-panel" id="adminReviewPanel" hidden>
+
+            <div class="admin-review-bg admin-review-bg-1"></div>
+            <div class="admin-review-bg admin-review-bg-2"></div>
+
+            <div class="admin-review-header">
+
+                <div class="admin-review-title">
+
+                    <span class="admin-mini-badge">
+
+                        <i class="fa-solid fa-user-shield"></i>
+                        ACCESO ESPECIAL
+
+                    </span>
+
+                    <h2>
+
+                        Panel de revisión de evidencias
+
+                    </h2>
+
+                    <p>
+
+                        Apartado exclusivo para supervisión. Aquí se muestran los participantes
+                        y sus evidencias subidas por día, para validar que cada imagen corresponda
+                        al reto indicado.
+
+                    </p>
+
+                </div>
+
+                <div class="admin-review-access-card">
+
+                    <i class="fa-solid fa-lock-open"></i>
+
+                    <div>
+
+                        <strong>
+                            Revisión autorizada
+                        </strong>
+
+                        <span id="adminReviewerEmail">
+                            Cuenta supervisora
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="admin-review-kpis">
+
+                <div class="admin-kpi-card">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    <div>
+
+                        <strong id="adminTotalUsers">
+                            0
+                        </strong>
+
+                        <span>
+                            Participantes
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="admin-kpi-card">
+
+                    <i class="fa-solid fa-images"></i>
+
+                    <div>
+
+                        <strong id="adminTotalEvidence">
+                            0
+                        </strong>
+
+                        <span>
+                            Evidencias cargadas
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="admin-kpi-card">
+
+                    <i class="fa-solid fa-trophy"></i>
+
+                    <div>
+
+                        <strong id="adminCompletedAlbums">
+                            0
+                        </strong>
+
+                        <span>
+                            Álbumes completos
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="admin-kpi-card">
+
+                    <i class="fa-solid fa-calendar-check"></i>
+
+                    <div>
+
+                        <strong id="adminCurrentDay">
+                            0
+                        </strong>
+
+                        <span>
+                            Día activo
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="admin-review-toolbar">
+
+                <label class="admin-search-box" for="adminReviewSearch">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <input 
+                        id="adminReviewSearch"
+                        type="search"
+                        placeholder="Buscar participante por correo o nombre">
+
+                </label>
+
+                <label class="admin-filter-box" for="adminReviewFilter">
+
+                    <i class="fa-solid fa-filter"></i>
+
+                    <select id="adminReviewFilter">
+
+                        <option value="all">
+                            Todos los participantes
+                        </option>
+
+                        <option value="withEvidence">
+                            Con evidencias
+                        </option>
+
+                        <option value="withoutEvidence">
+                            Sin evidencias
+                        </option>
+
+                        <option value="complete">
+                            Álbum completo
+                        </option>
+
+                        <option value="incomplete">
+                            Álbum incompleto
+                        </option>
+
+                    </select>
+
+                </label>
+
+                <button 
+                    class="admin-refresh-btn"
+                    id="adminRefreshReviewBtn"
+                    type="button">
+
+                    <i class="fa-solid fa-rotate-right"></i>
+                    Actualizar
+
+                </button>
+
+            </div>
+
+            <div class="admin-review-note">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <p>
+
+                    Para revisar una evidencia, da clic sobre la imagen del día. 
+                    Si un espacio aparece como “Sin evidencia”, significa que ese participante
+                    aún no ha cargado imagen para ese reto.
+
+                </p>
+
+            </div>
+
+            <div class="admin-review-grid" id="adminReviewGrid">
+
+                <div class="admin-review-loading">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    <span>
+                        Cargando evidencias de participantes...
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
     </main>
 
 
@@ -1196,7 +1425,7 @@
     <!-- JS PRINCIPAL -->
     <!-- ========================================= -->
 
-    <script type="module" src="album.js?v=7.2"></script>
+    <script type="module" src="album.js?v=8.0"></script>
 
 </body>
 
