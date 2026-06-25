@@ -100,7 +100,8 @@ const realtimeDB = getDatabase(app);
 
 const ADMIN_EMAILS = [
     "ksanchez@aguakan.com",
-    "echan@aguakan.com"
+    "echan@aguakan.com",
+   "prueba11@gmail.com"
 ];
 
 /* =========================================================
