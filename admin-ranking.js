@@ -1,7 +1,7 @@
 /* =========================================================
    ADMIN RANKING + EVIDENCE REVIEW ENGINE
    CONECTANDO SANAMENTE 2026 • AGUAKAN
-   VERSION: V2.0 SUPERVISION + USER EVIDENCE VALIDATION
+   VERSION: V2.1 SUPERVISION + USER EVIDENCE VALIDATION + SAFE FALLBACK
 
    Mantiene:
    - Validación de acceso supervisor
@@ -53,6 +53,25 @@ const DATABASE_PATHS = {
     globalWinner:"globalWinner",
     evidenceReviews:"evidenceReviews"
 };
+
+/*
+    SAFE REVIEW FALLBACK
+    -----------------------------------------------------
+    Si Firebase bloquea la escritura en evidenceReviews por reglas
+    de Realtime Database, el panel ya no se rompe ni lanza alerta
+    invasiva. Guarda la revisión en localStorage para que la
+    supervisora pueda continuar revisando en ese navegador.
+
+    Para que las revisiones queden compartidas entre Keyla/Edith
+    y persistan en cualquier equipo, TI debe permitir escritura
+    en la ruta evidenceReviews para las cuentas administradoras.
+*/
+
+const LOCAL_REVIEWS_STORAGE_KEY = "aguakanEvidenceReviewsLocalV21";
+const PERMISSION_ERROR_CODES = [
+    "PERMISSION_DENIED",
+    "permission-denied"
+];
 
 const REVIEW_STATUS = {
     pending:{
@@ -227,7 +246,7 @@ ADMIN RANKING PANEL • CONECTANDO SANAMENTE 2026
 STATUS   : ONLINE
 MODE     : SUPERVISION + EVIDENCE REVIEW
 DATABASE : REALTIME DATABASE
-VERSION  : V2.0 USER EVIDENCE CENTER
+VERSION  : V2.1 USER EVIDENCE CENTER + SAFE FALLBACK
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 `);
@@ -550,9 +569,15 @@ function listenEvidenceReviews(){
 
     }, (error) => {
 
-        console.warn("No se pudieron leer las revisiones de evidencias:", error);
-        state.reviewsData = {};
+        console.warn("No se pudieron leer las revisiones de evidencias en Firebase:", error);
+
+        state.reviewsData = loadLocalEvidenceReviews();
+
         renderEvidenceDashboard();
+
+        showPermissionNoticeOnce(
+            "Las revisiones se mostrarán desde este navegador porque Firebase bloqueó la lectura de evidenceReviews."
+        );
 
     });
 
@@ -591,22 +616,58 @@ async function manualRefresh(){
 
     try{
 
-        const [rankingSnapshot, winnerSnapshot, reviewsSnapshot] = await Promise.all([
-            get(realtimeRef(realtimeDB, DATABASE_PATHS.ranking)),
-            get(realtimeRef(realtimeDB, DATABASE_PATHS.globalWinner)),
-            get(realtimeRef(realtimeDB, DATABASE_PATHS.evidenceReviews))
-        ]);
+        const rankingSnapshot = await get(
+            realtimeRef(realtimeDB, DATABASE_PATHS.ranking)
+        );
 
         state.rankingData = normalizeRankingData(rankingSnapshot.val() || {});
-        state.reviewsData = reviewsSnapshot.val() || {};
+
+        try{
+
+            const reviewsSnapshot = await get(
+                realtimeRef(realtimeDB, DATABASE_PATHS.evidenceReviews)
+            );
+
+            state.reviewsData = mergeReviewData(
+                reviewsSnapshot.val() || {},
+                loadLocalEvidenceReviews()
+            );
+
+        }catch(reviewError){
+
+            console.warn(
+                "No se pudieron actualizar revisiones desde Firebase. Se usará respaldo local:",
+                reviewError
+            );
+
+            state.reviewsData = loadLocalEvidenceReviews();
+
+            showPermissionNoticeOnce(
+                "Firebase bloqueó la lectura/escritura de revisiones. El panel usará respaldo local en este navegador."
+            );
+
+        }
 
         renderDashboard(state.rankingData);
         renderEvidenceDashboard();
 
-        if(winnerSnapshot.exists()){
-            renderGlobalWinner(winnerSnapshot.val());
-        }else{
+        try{
+
+            const winnerSnapshot = await get(
+                realtimeRef(realtimeDB, DATABASE_PATHS.globalWinner)
+            );
+
+            if(winnerSnapshot.exists()){
+                renderGlobalWinner(winnerSnapshot.val());
+            }else{
+                renderNoWinner();
+            }
+
+        }catch(winnerError){
+
+            console.warn("No se pudo actualizar ganador global:", winnerError);
             renderNoWinner();
+
         }
 
     }catch(error){
@@ -1717,8 +1778,38 @@ async function saveEvidenceReview(status){
 
     }catch(error){
 
-        console.error("Error guardando revisión de evidencia:", error);
-        alert(`No se pudo guardar la revisión: ${error.code || error.message}`);
+        console.error("Error guardando revisión de evidencia en Firebase:", error);
+
+        if(isPermissionError(error)){
+
+            reviewPayload.localOnly = true;
+            reviewPayload.syncStatus = "local";
+
+            saveLocalEvidenceReview(
+                evidence.uid,
+                evidence.day,
+                reviewPayload
+            );
+
+            state.reviewsData[evidence.uid] = state.reviewsData[evidence.uid] || {};
+            state.reviewsData[evidence.uid][`day${evidence.day}`] = reviewPayload;
+
+            renderEvidenceDashboard();
+            openEvidenceModal(evidence.uid, evidence.day);
+
+            flashMessage(
+                `Revisión guardada localmente: ${REVIEW_STATUS[cleanStatus].label}.`
+            );
+
+            showPermissionNoticeOnce(
+                "Firebase no permitió guardar en evidenceReviews. La revisión quedó guardada solo en este navegador."
+            );
+
+        }else{
+
+            alert(`No se pudo guardar la revisión: ${error.code || error.message}`);
+
+        }
 
     }finally{
 
@@ -1761,6 +1852,7 @@ function renderEvidenceReviewHistory(evidence){
         <p>
             ${evidence.statusInfo.label} por <strong>${escapeHTML(evidence.reviewedBy || "Supervisión")}</strong><br>
             <small>${formatDate(evidence.reviewedAt)}</small>
+            ${evidence.localOnly ? `<br><em>Guardado localmente por permisos de Firebase.</em>` : ""}
         </p>
     `;
 
@@ -1853,6 +1945,139 @@ function clearEvidenceFilters(){
 
     switchEvidenceView("participants");
     renderEvidenceDashboard();
+
+}
+
+/* =========================================================
+   LOCAL REVIEW FALLBACK
+========================================================= */
+
+function isPermissionError(error){
+
+    const code = String(error?.code || "");
+    const message = String(error?.message || "");
+
+    return PERMISSION_ERROR_CODES.some(item => {
+        return code.includes(item) || message.includes(item);
+    });
+
+}
+
+function loadLocalEvidenceReviews(){
+
+    try{
+
+        const raw = localStorage.getItem(LOCAL_REVIEWS_STORAGE_KEY);
+
+        if(!raw) return {};
+
+        const parsed = JSON.parse(raw);
+
+        return parsed && typeof parsed === "object" ? parsed : {};
+
+    }catch(error){
+
+        console.warn("No se pudo leer respaldo local de revisiones:", error);
+        return {};
+
+    }
+
+}
+
+function saveLocalEvidenceReview(uid, day, payload){
+
+    try{
+
+        const localReviews = loadLocalEvidenceReviews();
+
+        localReviews[uid] = localReviews[uid] || {};
+        localReviews[uid][`day${day}`] = payload;
+
+        localStorage.setItem(
+            LOCAL_REVIEWS_STORAGE_KEY,
+            JSON.stringify(localReviews)
+        );
+
+    }catch(error){
+
+        console.error("No se pudo guardar revisión local:", error);
+        alert("Firebase bloqueó la revisión y tampoco se pudo guardar respaldo local.");
+
+    }
+
+}
+
+function mergeReviewData(remoteReviews = {}, localReviews = {}){
+
+    const merged = structuredCloneSafe(remoteReviews);
+
+    Object.entries(localReviews || {}).forEach(([uid,days]) => {
+
+        merged[uid] = merged[uid] || {};
+
+        Object.entries(days || {}).forEach(([dayKey,localReview]) => {
+
+            const remoteReview = merged[uid][dayKey];
+
+            if(!remoteReview){
+                merged[uid][dayKey] = localReview;
+                return;
+            }
+
+            const remoteTime = Number(remoteReview.reviewedAt || remoteReview.updatedAt || 0);
+            const localTime = Number(localReview.reviewedAt || localReview.updatedAt || 0);
+
+            if(localTime > remoteTime){
+                merged[uid][dayKey] = localReview;
+            }
+
+        });
+
+    });
+
+    return merged;
+
+}
+
+function structuredCloneSafe(value){
+
+    try{
+
+        return JSON.parse(JSON.stringify(value || {}));
+
+    }catch(error){
+
+        return {};
+
+    }
+
+}
+
+let permissionNoticeAlreadyShown = false;
+
+function showPermissionNoticeOnce(message){
+
+    if(permissionNoticeAlreadyShown) return;
+
+    permissionNoticeAlreadyShown = true;
+
+    console.warn(message);
+
+    const notice = document.createElement("div");
+    notice.className = "admin-toast warning";
+    notice.innerHTML = `
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>${escapeHTML(message)}</span>
+    `;
+
+    document.body.appendChild(notice);
+
+    requestAnimationFrame(() => notice.classList.add("show"));
+
+    setTimeout(() => {
+        notice.classList.remove("show");
+        setTimeout(() => notice.remove(),300);
+    },6200);
 
 }
 
@@ -2224,6 +2449,39 @@ function flashMessage(message){
     },2800);
 
 }
+
+/* =========================================================
+   SMALL RUNTIME STYLES
+========================================================= */
+
+(function injectRuntimeStyles(){
+
+    if(document.getElementById("adminRuntimeEvidenceStyles")) return;
+
+    const style = document.createElement("style");
+    style.id = "adminRuntimeEvidenceStyles";
+    style.textContent = `
+        .admin-toast.warning{
+            background:linear-gradient(135deg,#fff7ed,#fff1f2);
+            color:#9a3412;
+            border:1px solid rgba(251,146,60,.35);
+        }
+        .admin-toast.warning i{
+            color:#f97316;
+        }
+        .evidence-review-history em,
+        #evidenceReviewHistory em{
+            display:inline-block;
+            margin-top:4px;
+            color:#b7791f;
+            font-style:normal;
+            font-weight:800;
+        }
+    `;
+
+    document.head.appendChild(style);
+
+})();
 
 /* =========================================================
    INITIAL PAINT
