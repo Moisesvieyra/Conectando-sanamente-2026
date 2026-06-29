@@ -11,6 +11,15 @@
         Álbum Bienestar | Conectando Sanamente
     </title>
 
+
+    <meta 
+    name="description" 
+    content="Álbum de Bienestar Conectando Sanamente 2026 - Reto de 21 días Aguakan">
+
+    <meta 
+    name="theme-color" 
+    content="#0d5cab">
+
     <!-- FONTS -->
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +35,7 @@
 
     <!-- CSS -->
 
-    <link rel="stylesheet" href="album.css?v=8.0">
+    <link rel="stylesheet" href="album.css?v=8.1">
 
 </head>
 
@@ -1043,12 +1052,22 @@
         <!-- ========================================= -->
         <!-- PANEL ESPECIAL DE REVISIÓN DE EVIDENCIAS -->
         <!-- Visible únicamente para correos autorizados -->
+        <!-- Correos autorizados:
+             - ksanchez@aguakan.com
+             - echan@aguakan.com
         <!-- ========================================= -->
 
-        <section class="admin-review-panel" id="adminReviewPanel" hidden>
+        <section 
+            class="admin-review-panel admin-only" 
+            id="adminReviewPanel" 
+            data-authorized-admins="ksanchez@aguakan.com,echan@aguakan.com"
+            hidden>
 
             <div class="admin-review-bg admin-review-bg-1"></div>
             <div class="admin-review-bg admin-review-bg-2"></div>
+            <div class="admin-review-bg admin-review-bg-3"></div>
+
+            <!-- ENCABEZADO DEL PANEL -->
 
             <div class="admin-review-header">
 
@@ -1057,45 +1076,74 @@
                     <span class="admin-mini-badge">
 
                         <i class="fa-solid fa-user-shield"></i>
-                        ACCESO ESPECIAL
+                        PANEL SUPERVISOR
 
                     </span>
 
                     <h2>
 
-                        Panel de revisión de evidencias
+                        Revisión de evidencias del álbum
 
                     </h2>
 
                     <p>
 
-                        Apartado exclusivo para supervisión. Aquí se muestran los participantes
-                        y sus evidencias subidas por día, para validar que cada imagen corresponda
-                        al reto indicado.
+                        Apartado exclusivo para la Lic. Keyla y la Lic. Edith. 
+                        Desde aquí se pueden visualizar los participantes, revisar las fotos subidas por día
+                        y validar que cada evidencia corresponda correctamente al reto indicado.
 
                     </p>
+
+                    <div class="admin-authorized-row">
+
+                        <span>
+
+                            <i class="fa-solid fa-circle-check"></i>
+                            Acceso permitido para:
+
+                        </span>
+
+                        <strong>
+                            ksanchez@aguakan.com
+                        </strong>
+
+                        <strong>
+                            echan@aguakan.com
+                        </strong>
+
+                    </div>
 
                 </div>
 
                 <div class="admin-review-access-card">
 
-                    <i class="fa-solid fa-lock-open"></i>
+                    <div class="admin-access-icon">
+
+                        <i class="fa-solid fa-lock-open"></i>
+
+                    </div>
 
                     <div>
 
                         <strong>
-                            Revisión autorizada
+                            Sesión supervisora activa
                         </strong>
 
                         <span id="adminReviewerEmail">
-                            Cuenta supervisora
+                            Cuenta autorizada
                         </span>
+
+                        <small>
+                            Vista de control y validación
+                        </small>
 
                     </div>
 
                 </div>
 
             </div>
+
+            <!-- RESUMEN EJECUTIVO -->
 
             <div class="admin-review-kpis">
 
@@ -1171,7 +1219,63 @@
 
                 </div>
 
+                <div class="admin-kpi-card admin-kpi-warning">
+
+                    <i class="fa-solid fa-hourglass-half"></i>
+
+                    <div>
+
+                        <strong id="adminPendingEvidence">
+                            0
+                        </strong>
+
+                        <span>
+                            Pendientes por revisar
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="admin-kpi-card admin-kpi-success">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    <div>
+
+                        <strong id="adminApprovedEvidence">
+                            0
+                        </strong>
+
+                        <span>
+                            Aprobadas
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="admin-kpi-card admin-kpi-danger">
+
+                    <i class="fa-solid fa-circle-xmark"></i>
+
+                    <div>
+
+                        <strong id="adminRejectedEvidence">
+                            0
+                        </strong>
+
+                        <span>
+                            Rechazadas
+                        </span>
+
+                    </div>
+
+                </div>
+
             </div>
+
+            <!-- BARRA DE HERRAMIENTAS -->
 
             <div class="admin-review-toolbar">
 
@@ -1182,7 +1286,7 @@
                     <input 
                         id="adminReviewSearch"
                         type="search"
-                        placeholder="Buscar participante por correo o nombre">
+                        placeholder="Buscar por correo, nombre o participante">
 
                 </label>
 
@@ -1216,6 +1320,94 @@
 
                 </label>
 
+                <label class="admin-filter-box" for="adminReviewDayFilter">
+
+                    <i class="fa-solid fa-calendar-day"></i>
+
+                    <select id="adminReviewDayFilter">
+
+                        <option value="all">
+                            Todos los días
+                        </option>
+
+                        <option value="1">Día 1</option>
+                        <option value="2">Día 2</option>
+                        <option value="3">Día 3</option>
+                        <option value="4">Día 4</option>
+                        <option value="5">Día 5</option>
+                        <option value="6">Día 6</option>
+                        <option value="7">Día 7</option>
+                        <option value="8">Día 8</option>
+                        <option value="9">Día 9</option>
+                        <option value="10">Día 10</option>
+                        <option value="11">Día 11</option>
+                        <option value="12">Día 12</option>
+                        <option value="13">Día 13</option>
+                        <option value="14">Día 14</option>
+                        <option value="15">Día 15</option>
+                        <option value="16">Día 16</option>
+                        <option value="17">Día 17</option>
+                        <option value="18">Día 18</option>
+                        <option value="19">Día 19</option>
+                        <option value="20">Día 20</option>
+                        <option value="21">Día 21</option>
+
+                    </select>
+
+                </label>
+
+                <label class="admin-filter-box" for="adminReviewStatusFilter">
+
+                    <i class="fa-solid fa-clipboard-check"></i>
+
+                    <select id="adminReviewStatusFilter">
+
+                        <option value="all">
+                            Todos los estados
+                        </option>
+
+                        <option value="pending">
+                            Pendiente de revisión
+                        </option>
+
+                        <option value="approved">
+                            Aprobada
+                        </option>
+
+                        <option value="rejected">
+                            Rechazada
+                        </option>
+
+                    </select>
+
+                </label>
+
+                <label class="admin-filter-box" for="adminReviewSort">
+
+                    <i class="fa-solid fa-arrow-down-wide-short"></i>
+
+                    <select id="adminReviewSort">
+
+                        <option value="progressDesc">
+                            Mayor avance primero
+                        </option>
+
+                        <option value="progressAsc">
+                            Menor avance primero
+                        </option>
+
+                        <option value="nameAsc">
+                            Nombre A-Z
+                        </option>
+
+                        <option value="updatedDesc">
+                            Actualizados recientemente
+                        </option>
+
+                    </select>
+
+                </label>
+
                 <button 
                     class="admin-refresh-btn"
                     id="adminRefreshReviewBtn"
@@ -1226,7 +1418,58 @@
 
                 </button>
 
+                <button 
+                    class="admin-export-btn"
+                    id="adminExportReviewBtn"
+                    type="button">
+
+                    <i class="fa-solid fa-file-export"></i>
+                    Exportar resumen
+
+                </button>
+
             </div>
+
+            <!-- NAVEGACIÓN INTERNA DEL PANEL -->
+
+            <div class="admin-review-tabs" role="tablist" aria-label="Vistas de revisión">
+
+                <button 
+                    class="admin-review-tab active"
+                    id="adminTabCards"
+                    type="button"
+                    data-admin-view="cards">
+
+                    <i class="fa-solid fa-table-cells-large"></i>
+                    Vista por participante
+
+                </button>
+
+                <button 
+                    class="admin-review-tab"
+                    id="adminTabMatrix"
+                    type="button"
+                    data-admin-view="matrix">
+
+                    <i class="fa-solid fa-table"></i>
+                    Matriz por día
+
+                </button>
+
+                <button 
+                    class="admin-review-tab"
+                    id="adminTabPending"
+                    type="button"
+                    data-admin-view="pending">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Pendientes
+
+                </button>
+
+            </div>
+
+            <!-- NOTA OPERATIVA -->
 
             <div class="admin-review-note">
 
@@ -1234,13 +1477,15 @@
 
                 <p>
 
-                    Para revisar una evidencia, da clic sobre la imagen del día. 
-                    Si un espacio aparece como “Sin evidencia”, significa que ese participante
-                    aún no ha cargado imagen para ese reto.
+                    Da clic en cualquier evidencia para verla en grande. 
+                    Si se activa la validación, la supervisora podrá aprobar, rechazar o agregar una observación.
+                    Los espacios marcados como “Sin evidencia” indican que el participante aún no ha cargado imagen para ese día.
 
                 </p>
 
             </div>
+
+            <!-- CONTENEDOR DE RESULTADOS -->
 
             <div class="admin-review-grid" id="adminReviewGrid">
 
@@ -1256,9 +1501,188 @@
 
             </div>
 
+            <!-- MATRIZ / TABLA OPCIONAL PARA JS -->
+
+            <div class="admin-review-matrix" id="adminReviewMatrix" hidden>
+
+                <div class="admin-matrix-empty">
+
+                    <i class="fa-solid fa-table"></i>
+
+                    <h3>
+                        Matriz de revisión por día
+                    </h3>
+
+                    <p>
+                        Esta vista se llenará automáticamente desde JavaScript con los participantes y sus 21 días.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- ESTADO VACÍO -->
+
+            <div class="admin-review-empty" id="adminReviewEmpty" hidden>
+
+                <i class="fa-solid fa-folder-open"></i>
+
+                <h3>
+                    No se encontraron evidencias
+                </h3>
+
+                <p>
+                    Cambia los filtros o actualiza la información para volver a consultar.
+                </p>
+
+            </div>
+
         </section>
 
+
     </main>
+
+
+
+    <!-- ========================================= -->
+    <!-- MODAL DE VALIDACIÓN DE EVIDENCIAS -->
+    <!-- Uso exclusivo del panel supervisor -->
+    <!-- ========================================= -->
+
+    <div class="admin-evidence-modal" id="adminEvidenceModal" hidden>
+
+        <div class="admin-evidence-modal-card">
+
+            <button 
+                class="admin-evidence-close"
+                id="adminEvidenceClose"
+                type="button"
+                aria-label="Cerrar revisión de evidencia">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+            <div class="admin-evidence-modal-header">
+
+                <span class="admin-mini-badge">
+
+                    <i class="fa-solid fa-shield-heart"></i>
+                    REVISIÓN DE EVIDENCIA
+
+                </span>
+
+                <h2 id="adminEvidenceModalTitle">
+                    Evidencia del participante
+                </h2>
+
+                <p id="adminEvidenceModalSubtitle">
+                    Valida que la fotografía corresponda al reto seleccionado.
+                </p>
+
+            </div>
+
+            <div class="admin-evidence-modal-body">
+
+                <div class="admin-evidence-image-wrap">
+
+                    <img 
+                        id="adminEvidenceModalImage"
+                        src=""
+                        alt="Evidencia enviada por participante">
+
+                </div>
+
+                <aside class="admin-evidence-info">
+
+                    <div class="admin-evidence-info-card">
+
+                        <span>
+                            Participante
+                        </span>
+
+                        <strong id="adminEvidenceUserEmail">
+                            participante@aguakan.com
+                        </strong>
+
+                    </div>
+
+                    <div class="admin-evidence-info-card">
+
+                        <span>
+                            Día del reto
+                        </span>
+
+                        <strong id="adminEvidenceDay">
+                            Día 1
+                        </strong>
+
+                    </div>
+
+                    <div class="admin-evidence-info-card">
+
+                        <span>
+                            Estado de revisión
+                        </span>
+
+                        <strong id="adminEvidenceStatus">
+                            Pendiente
+                        </strong>
+
+                    </div>
+
+                    <label class="admin-evidence-observation" for="adminEvidenceObservation">
+
+                        Observación de revisión
+
+                        <textarea 
+                            id="adminEvidenceObservation"
+                            rows="5"
+                            placeholder="Escribe una observación en caso de que la evidencia no corresponda al reto."></textarea>
+
+                    </label>
+
+                    <div class="admin-evidence-actions">
+
+                        <button 
+                            class="admin-approve-btn"
+                            id="adminApproveEvidenceBtn"
+                            type="button">
+
+                            <i class="fa-solid fa-circle-check"></i>
+                            Aprobar
+
+                        </button>
+
+                        <button 
+                            class="admin-reject-btn"
+                            id="adminRejectEvidenceBtn"
+                            type="button">
+
+                            <i class="fa-solid fa-circle-xmark"></i>
+                            Rechazar
+
+                        </button>
+
+                        <button 
+                            class="admin-pending-btn"
+                            id="adminPendingEvidenceBtn"
+                            type="button">
+
+                            <i class="fa-solid fa-clock"></i>
+                            Pendiente
+
+                        </button>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
     <!-- ========================================= -->
@@ -1425,7 +1849,7 @@
     <!-- JS PRINCIPAL -->
     <!-- ========================================= -->
 
-    <script type="module" src="album.js?v=8.0"></script>
+    <script type="module" src="album.js?v=8.1"></script>
 
 </body>
 
