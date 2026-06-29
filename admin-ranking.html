@@ -56,7 +56,7 @@
 
     <link
     rel="stylesheet"
-    href="admin-ranking.css?v=1.0">
+    href="admin-ranking.css?v=1.2">
 
 </head>
 
@@ -175,6 +175,16 @@
 
                     <span>
                         Participantes
+                    </span>
+
+                </a>
+
+                <a href="#evidencias" class="sidebar-link">
+
+                    <i class="fa-solid fa-images"></i>
+
+                    <span>
+                        Evidencias
                     </span>
 
                 </a>
@@ -623,6 +633,616 @@
 
             </section>
 
+            <!-- =========================================================
+               EVIDENCE REVIEW PANEL • V2
+               Apartado avanzado para validar fotografías por usuario y día.
+               Mantiene compatibilidad con admin-ranking.js mediante IDs existentes.
+            ========================================================= -->
+
+            <section class="dashboard-card evidence-review-panel evidence-review-panel-v2" id="evidencias">
+
+                <div class="evidence-hero-shell">
+
+                    <div class="evidence-hero-content">
+
+                        <span class="evidence-super-badge">
+                            <i class="fa-solid fa-shield-heart"></i>
+                            Centro de supervisión
+                        </span>
+
+                        <h3>
+                            Validación de evidencias por participante
+                        </h3>
+
+                        <p>
+                            Revisa, compara y valida las fotografías que suben los usuarios en cada día del Álbum de Bienestar. Este apartado está pensado para que Keyla Sánchez y Edith Chan puedan verificar rápidamente si la evidencia corresponde al reto indicado.
+                        </p>
+
+                        <div class="evidence-hero-tags" aria-label="Funciones del panel de evidencias">
+
+                            <span>
+                                <i class="fa-solid fa-users-viewfinder"></i>
+                                Usuarios agrupados
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-calendar-days"></i>
+                                Días 1 al 21
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                                Revisión visual
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-list-check"></i>
+                                Aprobación interna
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="evidence-hero-card">
+
+                        <div class="evidence-hero-icon">
+                            <i class="fa-solid fa-camera-retro"></i>
+                        </div>
+
+                        <span>
+                            Modo revisión
+                        </span>
+
+                        <strong>
+                            Evidencias del álbum
+                        </strong>
+
+                        <p>
+                            Selecciona un usuario y revisa sus imágenes por día.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="evidence-kpi-grid evidence-kpi-grid-v2" aria-label="Indicadores de evidencias">
+
+                    <article class="evidence-kpi-card total">
+
+                        <div class="evidence-kpi-icon">
+                            <i class="fa-solid fa-photo-film"></i>
+                        </div>
+
+                        <div>
+                            <span>Total cargadas</span>
+                            <strong id="totalEvidenceImages">0</strong>
+                            <p>Imágenes recibidas</p>
+                        </div>
+
+                    </article>
+
+                    <article class="evidence-kpi-card pending">
+
+                        <div class="evidence-kpi-icon">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+
+                        <div>
+                            <span>Pendientes</span>
+                            <strong id="pendingEvidenceCount">0</strong>
+                            <p>Evidencias por revisar</p>
+                        </div>
+
+                    </article>
+
+                    <article class="evidence-kpi-card approved">
+
+                        <div class="evidence-kpi-icon">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+
+                        <div>
+                            <span>Aprobadas</span>
+                            <strong id="approvedEvidenceCount">0</strong>
+                            <p>Fotos validadas</p>
+                        </div>
+
+                    </article>
+
+                    <article class="evidence-kpi-card rejected">
+
+                        <div class="evidence-kpi-icon">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </div>
+
+                        <div>
+                            <span>Rechazadas</span>
+                            <strong id="rejectedEvidenceCount">0</strong>
+                            <p>Fotos incorrectas</p>
+                        </div>
+
+                    </article>
+
+                    <article class="evidence-kpi-card missing">
+
+                        <div class="evidence-kpi-icon">
+                            <i class="fa-solid fa-image-slash"></i>
+                        </div>
+
+                        <div>
+                            <span>Sin evidencia</span>
+                            <strong id="missingEvidenceCount">0</strong>
+                            <p>Espacios no cargados</p>
+                        </div>
+
+                    </article>
+
+                </div>
+
+                <div class="evidence-command-bar">
+
+                    <div class="evidence-command-title">
+
+                        <span>
+                            Control de búsqueda
+                        </span>
+
+                        <strong>
+                            Filtra por usuario, día o estado
+                        </strong>
+
+                    </div>
+
+                    <div class="evidence-toolbar evidence-toolbar-v2">
+
+                        <label class="evidence-search-box" for="evidenceSearch">
+
+                            <i class="fa-solid fa-magnifying-glass"></i>
+
+                            <input
+                            type="search"
+                            id="evidenceSearch"
+                            autocomplete="off"
+                            placeholder="Buscar por nombre o correo del participante">
+
+                        </label>
+
+                        <label class="evidence-filter-box" for="evidenceDayFilter">
+
+                            <i class="fa-solid fa-calendar-day"></i>
+
+                            <select id="evidenceDayFilter">
+                                <option value="all">Todos los días</option>
+                                <option value="1">Día 1</option>
+                                <option value="2">Día 2</option>
+                                <option value="3">Día 3</option>
+                                <option value="4">Día 4</option>
+                                <option value="5">Día 5</option>
+                                <option value="6">Día 6</option>
+                                <option value="7">Día 7</option>
+                                <option value="8">Día 8</option>
+                                <option value="9">Día 9</option>
+                                <option value="10">Día 10</option>
+                                <option value="11">Día 11</option>
+                                <option value="12">Día 12</option>
+                                <option value="13">Día 13</option>
+                                <option value="14">Día 14</option>
+                                <option value="15">Día 15</option>
+                                <option value="16">Día 16</option>
+                                <option value="17">Día 17</option>
+                                <option value="18">Día 18</option>
+                                <option value="19">Día 19</option>
+                                <option value="20">Día 20</option>
+                                <option value="21">Día 21</option>
+                            </select>
+
+                        </label>
+
+                        <label class="evidence-filter-box" for="evidenceStatusFilter">
+
+                            <i class="fa-solid fa-list-check"></i>
+
+                            <select id="evidenceStatusFilter">
+                                <option value="all">Todos los estados</option>
+                                <option value="pending">Pendientes</option>
+                                <option value="approved">Aprobadas</option>
+                                <option value="rejected">Rechazadas</option>
+                                <option value="missing">Sin evidencia</option>
+                            </select>
+
+                        </label>
+
+                        <label class="evidence-filter-box" for="evidenceProgressFilter">
+
+                            <i class="fa-solid fa-chart-pie"></i>
+
+                            <select id="evidenceProgressFilter">
+                                <option value="all">Cualquier avance</option>
+                                <option value="none">Sin avance</option>
+                                <option value="low">1 a 7 evidencias</option>
+                                <option value="medium">8 a 14 evidencias</option>
+                                <option value="high">15 a 20 evidencias</option>
+                                <option value="complete">21 evidencias</option>
+                            </select>
+
+                        </label>
+
+                        <label class="evidence-filter-box" for="evidenceSortFilter">
+
+                            <i class="fa-solid fa-arrow-down-wide-short"></i>
+
+                            <select id="evidenceSortFilter">
+                                <option value="progressDesc">Mayor avance</option>
+                                <option value="progressAsc">Menor avance</option>
+                                <option value="nameAsc">Nombre A-Z</option>
+                                <option value="updatedDesc">Actualización reciente</option>
+                                <option value="pendingDesc">Más pendientes</option>
+                            </select>
+
+                        </label>
+
+                    </div>
+
+                    <div class="evidence-header-actions evidence-header-actions-v2">
+
+                        <button
+                        type="button"
+                        class="refresh-btn"
+                        id="refreshEvidenceBtn">
+
+                            <i class="fa-solid fa-rotate"></i>
+                            Actualizar evidencias
+
+                        </button>
+
+                        <button
+                        type="button"
+                        class="export-evidence-btn"
+                        id="exportEvidenceBtn">
+
+                            <i class="fa-solid fa-file-arrow-down"></i>
+                            Exportar resumen
+
+                        </button>
+
+                        <button
+                        type="button"
+                        class="evidence-soft-btn"
+                        id="showOnlyPendingBtn">
+
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            Ver pendientes
+
+                        </button>
+
+                        <button
+                        type="button"
+                        class="evidence-soft-btn"
+                        id="clearEvidenceFiltersBtn">
+
+                            <i class="fa-solid fa-broom"></i>
+                            Limpiar filtros
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="evidence-view-tabs evidence-view-tabs-v2" role="tablist" aria-label="Vistas de evidencias">
+
+                    <button
+                    type="button"
+                    class="evidence-tab active"
+                    data-evidence-view="participants"
+                    role="tab"
+                    aria-selected="true">
+
+                        <i class="fa-solid fa-users-viewfinder"></i>
+                        Usuarios y sus imágenes
+
+                    </button>
+
+                    <button
+                    type="button"
+                    class="evidence-tab"
+                    data-evidence-view="days"
+                    role="tab"
+                    aria-selected="false">
+
+                        <i class="fa-solid fa-table-cells-large"></i>
+                        Matriz por día
+
+                    </button>
+
+                    <button
+                    type="button"
+                    class="evidence-tab"
+                    data-evidence-view="pending"
+                    role="tab"
+                    aria-selected="false">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Solo pendientes
+
+                    </button>
+
+                    <button
+                    type="button"
+                    class="evidence-tab"
+                    data-evidence-view="rejected"
+                    role="tab"
+                    aria-selected="false">
+
+                        <i class="fa-solid fa-ban"></i>
+                        Rechazadas
+
+                    </button>
+
+                </div>
+
+                <div class="evidence-review-note evidence-review-note-v2">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    <p>
+                        La vista principal agrupa las imágenes por usuario. Selecciona un participante para ver sus 21 días en orden. Las imágenes se abren en grande para revisar, aprobar, rechazar o dejar pendientes con una observación interna.
+                    </p>
+
+                </div>
+
+                <div class="evidence-workspace" id="evidenceWorkspace">
+
+                    <aside class="evidence-users-sidebar">
+
+                        <div class="evidence-users-sidebar-head">
+
+                            <div>
+                                <span>Participantes</span>
+                                <strong id="evidenceUsersCount">0 usuarios</strong>
+                            </div>
+
+                            <button
+                            type="button"
+                            class="evidence-icon-btn"
+                            id="toggleEvidenceUserListBtn"
+                            aria-label="Contraer lista de usuarios">
+
+                                <i class="fa-solid fa-angles-left"></i>
+
+                            </button>
+
+                        </div>
+
+                        <div class="evidence-mini-search">
+
+                            <i class="fa-solid fa-user-magnifying-glass"></i>
+
+                            <input
+                            type="search"
+                            id="evidenceUserQuickSearch"
+                            placeholder="Filtrar usuarios">
+
+                        </div>
+
+                        <div class="evidence-user-list" id="evidenceUserList">
+
+                            <div class="evidence-user-skeleton">
+                                <span></span>
+                                <div>
+                                    <strong></strong>
+                                    <small></small>
+                                </div>
+                            </div>
+
+                            <div class="evidence-user-skeleton">
+                                <span></span>
+                                <div>
+                                    <strong></strong>
+                                    <small></small>
+                                </div>
+                            </div>
+
+                            <div class="evidence-user-skeleton">
+                                <span></span>
+                                <div>
+                                    <strong></strong>
+                                    <small></small>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </aside>
+
+                    <div class="evidence-detail-panel">
+
+                        <div class="selected-evidence-user-card" id="selectedEvidenceUserCard">
+
+                            <div class="selected-user-avatar" id="selectedEvidenceUserAvatar">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+
+                            <div class="selected-user-info">
+
+                                <span>
+                                    Usuario seleccionado
+                                </span>
+
+                                <h4 id="selectedEvidenceUserName">
+                                    Selecciona un participante
+                                </h4>
+
+                                <p id="selectedEvidenceUserEmail">
+                                    Sus evidencias aparecerán aquí organizadas del día 1 al 21.
+                                </p>
+
+                            </div>
+
+                            <div class="selected-user-stats">
+
+                                <div>
+                                    <strong id="selectedEvidenceUserProgress">0/21</strong>
+                                    <span>Avance</span>
+                                </div>
+
+                                <div>
+                                    <strong id="selectedEvidenceUserPending">0</strong>
+                                    <span>Pendientes</span>
+                                </div>
+
+                                <div>
+                                    <strong id="selectedEvidenceUserApproved">0</strong>
+                                    <span>Aprobadas</span>
+                                </div>
+
+                                <div>
+                                    <strong id="selectedEvidenceUserRejected">0</strong>
+                                    <span>Rechazadas</span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="selected-user-progress-wrap">
+
+                            <div class="selected-user-progress-label">
+                                <span id="selectedEvidenceProgressLabel">Progreso de evidencias</span>
+                                <strong id="selectedEvidenceProgressPercent">0%</strong>
+                            </div>
+
+                            <div class="selected-user-progress-bar">
+                                <span id="selectedEvidenceProgressBar"></span>
+                            </div>
+
+                        </div>
+
+                        <div class="selected-user-days-header">
+
+                            <div>
+                                <span>Libro de evidencias</span>
+                                <h4>Imágenes por día</h4>
+                            </div>
+
+                            <div class="selected-user-legend">
+                                <span class="legend-dot pending"></span> Pendiente
+                                <span class="legend-dot approved"></span> Aprobada
+                                <span class="legend-dot rejected"></span> Rechazada
+                                <span class="legend-dot missing"></span> Sin evidencia
+                            </div>
+
+                        </div>
+
+                        <div class="selected-user-evidence-grid" id="selectedUserEvidenceGrid">
+
+                            <div class="empty-state evidence-empty-state">
+                                <i class="fa-solid fa-hand-pointer"></i>
+                                <p>Selecciona un participante para revisar sus imágenes.</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="evidence-review-content evidence-review-content-v2">
+
+                    <div
+                    class="evidence-users-view active"
+                    id="evidenceUsersView">
+
+                        <div class="empty-state">
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                            <p>Cargando evidencias por participante...</p>
+                        </div>
+
+                    </div>
+
+                    <div
+                    class="evidence-days-view"
+                    id="evidenceDaysView"
+                    hidden>
+
+                        <div class="empty-state">
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                            <p>Preparando matriz de evidencias...</p>
+                        </div>
+
+                    </div>
+
+                    <div
+                    class="evidence-pending-view"
+                    id="evidencePendingView"
+                    hidden>
+
+                        <div class="empty-state">
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                            <p>Buscando evidencias pendientes...</p>
+                        </div>
+
+                    </div>
+
+                    <div
+                    class="evidence-rejected-view"
+                    id="evidenceRejectedView"
+                    hidden>
+
+                        <div class="empty-state">
+                            <i class="fa-solid fa-ban"></i>
+                            <p>Aquí aparecerán las evidencias rechazadas.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="evidence-templates" aria-hidden="true">
+
+                    <template id="evidenceUserCardTemplate">
+
+                        <button type="button" class="evidence-user-card" data-user-id="">
+
+                            <span class="evidence-user-avatar">U</span>
+
+                            <span class="evidence-user-main">
+                                <strong data-template="name">Nombre del usuario</strong>
+                                <small data-template="email">correo@aguakan.com</small>
+                                <span class="evidence-user-progress-line"><i></i></span>
+                            </span>
+
+                            <span class="evidence-user-count" data-template="count">0/21</span>
+
+                        </button>
+
+                    </template>
+
+                    <template id="evidenceDayTileTemplate">
+
+                        <article class="evidence-day-tile pending" data-day="" data-user-id="">
+
+                            <div class="evidence-day-media">
+                                <img src="" alt="Evidencia del día">
+                                <button type="button" class="evidence-day-open">
+                                    <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                                </button>
+                            </div>
+
+                            <div class="evidence-day-info">
+                                <span data-template="day">Día 1</span>
+                                <strong data-template="title">Reto del día</strong>
+                                <small data-template="status">Pendiente</small>
+                            </div>
+
+                        </article>
+
+                    </template>
+
+                </div>
+
+            </section>
         </section>
 
     </main>
@@ -662,6 +1282,167 @@
     </div>
 
     <!-- =========================================================
+       EVIDENCE REVIEW MODAL • V2
+    ========================================================= -->
+
+    <div class="evidence-modal evidence-modal-v2" id="evidenceModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="evidenceModalTitle">
+
+        <div class="evidence-modal-backdrop" id="evidenceModalBackdrop"></div>
+
+        <div class="evidence-modal-card evidence-modal-card-v2">
+
+            <button
+            type="button"
+            class="evidence-modal-close"
+            id="closeEvidenceModal"
+            aria-label="Cerrar revisión de evidencia">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+            <div class="evidence-modal-media evidence-modal-media-v2">
+
+                <div class="evidence-modal-image-tools">
+
+                    <span id="evidenceModalDayPill">
+                        Día --
+                    </span>
+
+                    <a
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    id="openEvidenceOriginalBtn">
+
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        Abrir original
+
+                    </a>
+
+                </div>
+
+                <img
+                src=""
+                alt="Evidencia seleccionada"
+                id="evidenceModalImage">
+
+            </div>
+
+            <div class="evidence-modal-info evidence-modal-info-v2">
+
+                <div class="evidence-modal-topline">
+
+                    <span class="evidence-modal-badge" id="evidenceModalStatus">
+                        Pendiente
+                    </span>
+
+                    <span class="evidence-modal-source" id="evidenceModalSource">
+                        Firebase Storage
+                    </span>
+
+                </div>
+
+                <h3 id="evidenceModalTitle">
+                    Revisión de evidencia
+                </h3>
+
+                <p id="evidenceModalUser">
+                    Participante
+                </p>
+
+                <div class="evidence-modal-meta">
+
+                    <span id="evidenceModalDay">
+                        Día --
+                    </span>
+
+                    <span id="evidenceModalEmail">
+                        correo@aguakan.com
+                    </span>
+
+                    <span id="evidenceModalUpdated">
+                        Última actualización no disponible
+                    </span>
+
+                </div>
+
+                <div class="evidence-challenge-reference">
+
+                    <div>
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+
+                    <div>
+                        <span>Reto esperado</span>
+                        <strong id="evidenceModalChallengeTitle">Reto del día</strong>
+                        <p id="evidenceModalChallengeDescription">Descripción del reto para comparar con la fotografía subida.</p>
+                    </div>
+
+                </div>
+
+                <label for="evidenceReviewNote">
+                    Observación de revisión
+                </label>
+
+                <textarea
+                id="evidenceReviewNote"
+                rows="4"
+                placeholder="Ejemplo: evidencia correcta, imagen no corresponde al reto, foto borrosa, falta contexto, etc."></textarea>
+
+                <div class="evidence-review-history" id="evidenceReviewHistory">
+
+                    <span>
+                        Historial de revisión
+                    </span>
+
+                    <p>
+                        Sin movimientos registrados todavía.
+                    </p>
+
+                </div>
+
+                <div class="evidence-modal-actions evidence-modal-actions-v2">
+
+                    <button
+                    type="button"
+                    class="evidence-action-btn approve"
+                    id="approveEvidenceBtn">
+
+                        <i class="fa-solid fa-circle-check"></i>
+                        Aprobar
+
+                    </button>
+
+                    <button
+                    type="button"
+                    class="evidence-action-btn reject"
+                    id="rejectEvidenceBtn">
+
+                        <i class="fa-solid fa-circle-xmark"></i>
+                        Rechazar
+
+                    </button>
+
+                    <button
+                    type="button"
+                    class="evidence-action-btn pending"
+                    id="pendingEvidenceBtn">
+
+                        <i class="fa-solid fa-clock"></i>
+                        Pendiente
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================================
        FIREBASE CONFIG
     ========================================================= -->
 
@@ -676,7 +1457,7 @@
 
     <script
     type="module"
-    src="admin-ranking.js?v=1.0">
+    src="admin-ranking.js?v=1.2">
     </script>
 
 </body>
