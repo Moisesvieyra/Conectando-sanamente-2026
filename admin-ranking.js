@@ -1,7 +1,7 @@
 /* =========================================================
    ADMIN RANKING + EVIDENCE REVIEW ENGINE
    CONECTANDO SANAMENTE 2026 • AGUAKAN
-   VERSION: V2.1 SUPERVISION + USER EVIDENCE VALIDATION + SAFE FALLBACK
+   VERSION: V2.4 SUPERVISION + USER EVIDENCE VALIDATION + EMAIL ON REJECT
 
    Mantiene:
    - Validación de acceso supervisor
@@ -83,8 +83,17 @@ const PERMISSION_ERROR_CODES = [
        o desde una cuenta con alias de envío configurado.
 */
 
-const REJECT_EMAIL_WEB_APP_URL = "https://script.google.com/a/macros/aguakan.com/s/AKfycbxrAgDCmRohLW_kjekxbuTga8ocBSk1_byRTT1b8U5VNn2lTGYU53HE94IITs03dF43sA/exec";
+const REJECT_EMAIL_WEB_APP_URL = "https://script.google.com/a/macros/aguakan.com/s/AKfycbz12csTyhdNIB-zxU3bfx8-zpueZr_hARk8GiEZsgTxlK07xbJum94Nz4Z25Wj7RLy6KA/exec";
 const REJECT_EMAIL_ENABLED = true;
+const REJECT_EMAIL_FETCH_OPTIONS = {
+    method:"POST",
+    mode:"no-cors",
+    credentials:"include",
+    cache:"no-store",
+    headers:{
+        "Content-Type":"text/plain;charset=utf-8"
+    }
+};
 
 const REVIEW_STATUS = {
     pending:{
@@ -259,7 +268,7 @@ ADMIN RANKING PANEL • CONECTANDO SANAMENTE 2026
 STATUS   : ONLINE
 MODE     : SUPERVISION + EVIDENCE REVIEW
 DATABASE : REALTIME DATABASE
-VERSION  : V2.1 USER EVIDENCE CENTER + SAFE FALLBACK
+VERSION  : V2.4 USER EVIDENCE CENTER + EMAIL ON REJECT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 `);
@@ -1886,17 +1895,29 @@ async function sendRejectedEvidenceEmail(evidence, note, reviewPayload){
 
     try{
 
+        const emailRequestId = [
+            payload.userEmail,
+            `day${payload.day}`,
+            payload.reviewedAt || Date.now()
+        ].join("-").replace(/[^a-zA-Z0-9@._-]/g,"");
+
+        const emailPayload = {
+            ...payload,
+            requestId:emailRequestId
+        };
+
         await fetch(REJECT_EMAIL_WEB_APP_URL, {
-            method:"POST",
-            mode:"no-cors",
-            headers:{
-                "Content-Type":"text/plain;charset=utf-8"
-            },
-            body:JSON.stringify(payload)
+            ...REJECT_EMAIL_FETCH_OPTIONS,
+            body:JSON.stringify(emailPayload)
         });
 
-        console.log("Solicitud de correo de rechazo enviada a Apps Script:", payload.userEmail);
-        flashMessage(`Correo de rechazo enviado a ${payload.userEmail}.`);
+        console.log(
+            "Solicitud de correo de rechazo enviada a Apps Script:",
+            payload.userEmail,
+            emailPayload
+        );
+
+        flashMessage(`Solicitud de correo enviada a ${payload.userEmail}.`);
 
     }catch(error){
 
