@@ -73,6 +73,19 @@ const PERMISSION_ERROR_CODES = [
     "permission-denied"
 ];
 
+/*
+    EMAIL ON REJECT CONFIG
+    -----------------------------------------------------
+    1) Crea un Google Apps Script como Web App.
+    2) Pega la URL /exec en REJECT_EMAIL_WEB_APP_URL.
+    3) Para que el correo salga desde ksanchez@aguakan.com,
+       el Apps Script debe estar creado y desplegado desde esa cuenta
+       o desde una cuenta con alias de envío configurado.
+*/
+
+const REJECT_EMAIL_WEB_APP_URL = "PEGA_AQUI_LA_URL_DE_TU_APPS_SCRIPT";
+const REJECT_EMAIL_ENABLED = true;
+
 const REVIEW_STATUS = {
     pending:{
         key:"pending",
@@ -1774,6 +1787,14 @@ async function saveEvidenceReview(status){
         renderEvidenceDashboard();
         openEvidenceModal(evidence.uid, evidence.day);
 
+        if(cleanStatus === "rejected"){
+            await sendRejectedEvidenceEmail(
+                evidence,
+                note,
+                reviewPayload
+            );
+        }
+
         flashMessage(`Evidencia del día ${evidence.day} marcada como ${REVIEW_STATUS[cleanStatus].label.toLowerCase()}.`);
 
     }catch(error){
@@ -1797,6 +1818,14 @@ async function saveEvidenceReview(status){
             renderEvidenceDashboard();
             openEvidenceModal(evidence.uid, evidence.day);
 
+            if(cleanStatus === "rejected"){
+                await sendRejectedEvidenceEmail(
+                    evidence,
+                    note,
+                    reviewPayload
+                );
+            }
+
             flashMessage(
                 `Revisión guardada localmente: ${REVIEW_STATUS[cleanStatus].label}.`
             );
@@ -1814,6 +1843,65 @@ async function saveEvidenceReview(status){
     }finally{
 
         setReviewButtonsLoading(false);
+
+    }
+
+}
+
+async function sendRejectedEvidenceEmail(evidence, note, reviewPayload){
+
+    if(!REJECT_EMAIL_ENABLED) return;
+
+    if(!REJECT_EMAIL_WEB_APP_URL || REJECT_EMAIL_WEB_APP_URL.includes("PEGA_AQUI")){
+
+        console.warn("No se configuró REJECT_EMAIL_WEB_APP_URL. No se envió correo de rechazo.");
+        flashMessage("Rechazo guardado. Falta configurar la URL de Apps Script para enviar correo.");
+
+        return;
+
+    }
+
+    const payload = {
+        userEmail:evidence.userEmail || reviewPayload?.userEmail || "",
+        userName:evidence.userName || reviewPayload?.userName || "Participante",
+        day:evidence.day || reviewPayload?.day || "",
+        challengeTitle:evidence.challengeTitle || reviewPayload?.challengeTitle || "Reto del álbum",
+        challengeDescription:evidence.challengeDescription || reviewPayload?.challengeDescription || "",
+        note:note || "La evidencia no corresponde al reto solicitado.",
+        imageUrl:evidence.imageUrl || reviewPayload?.imageUrl || "",
+        reviewedBy:reviewPayload?.reviewedBy || getAdminDisplayName(normalizeEmail(state.currentAdmin?.email)),
+        reviewerEmail:reviewPayload?.reviewerEmail || normalizeEmail(state.currentAdmin?.email),
+        reviewedAt:reviewPayload?.reviewedAt || Date.now(),
+        source:"Conectando Sanamente 2026 - Panel de Evidencias"
+    };
+
+    if(!payload.userEmail){
+
+        console.warn("No se envió correo: la evidencia no tiene userEmail.", payload);
+        flashMessage("Rechazo guardado, pero no se encontró correo del participante.");
+
+        return;
+
+    }
+
+    try{
+
+        await fetch(REJECT_EMAIL_WEB_APP_URL, {
+            method:"POST",
+            mode:"no-cors",
+            headers:{
+                "Content-Type":"text/plain;charset=utf-8"
+            },
+            body:JSON.stringify(payload)
+        });
+
+        console.log("Solicitud de correo de rechazo enviada a Apps Script:", payload.userEmail);
+        flashMessage(`Correo de rechazo enviado a ${payload.userEmail}.`);
+
+    }catch(error){
+
+        console.warn("No se pudo solicitar el envío del correo de rechazo:", error);
+        flashMessage("Rechazo guardado, pero no se pudo solicitar el correo.");
 
     }
 
