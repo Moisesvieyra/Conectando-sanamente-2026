@@ -1,5 +1,5 @@
 /* ========================================= */
-/* AGUAKAN ALBUM ENGINE V8.2 CLEAN */
+/* AGUAKAN ALBUM ENGINE V8.3 CLEAN + ADMIN GUARD */
 /* CONECTANDO SANAMENTE 2026 */
 /* STORAGE + REALTIME RANKING */
 /* DELETE OWN EVIDENCE ENABLED */
@@ -35,7 +35,7 @@ STATUS   : ONLINE
 MODE     : PREMIUM EXPERIENCE
 STORAGE  : CONNECTED
 RANKING  : REALTIME DATABASE
-VERSION  : V8.2 CLEAN ALBUM • DAY 10 ACTIVE
+VERSION  : V8.3 CLEAN ALBUM • DAY 10 ACTIVE • ADMIN GUARD
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 `);
@@ -64,6 +64,34 @@ const rankingButton = document.getElementById("rankingButton") || document.query
 let completed = 0;
 const total = 21;
 let rankingUnsubscribe = null;
+
+/* ========================================= */
+/* ADMIN ROUTING GUARD */
+/* ========================================= */
+
+/*
+    Este bloque evita que una cuenta administradora se quede en el álbum.
+    Si Keyla, Edith o B. Durán entran por error a album.html, se redirigen
+    automáticamente al panel administrador.
+*/
+
+const ADMIN_EMAILS = [
+    "ksanchez@aguakan.com",
+    "echan@aguakan.com",
+    "bduran@aguakan.com"
+];
+
+const ADMIN_PAGE = "admin-ranking.html";
+const LOGIN_PAGE = "login.html";
+
+function normalizeEmail(email){
+    return String(email || "").trim().toLowerCase();
+}
+
+function isAdminEmail(email){
+    return ADMIN_EMAILS.includes(normalizeEmail(email));
+}
+
 
 /* ========================================= */
 /* DAILY LOCK CONFIG */
@@ -155,7 +183,22 @@ onAuthStateChanged(auth, async(user) => {
 
     if(!user){
 
-        window.location.href = "login.html";
+        window.location.href = LOGIN_PAGE;
+
+        return;
+
+    }
+
+    /*
+        Si el usuario autenticado es administrador, no debe quedarse
+        en el álbum de participante. Esto corrige el caso de bduran@aguakan.com
+        cuando el navegador todavía trae caché o entra directo a album.html.
+    */
+    if(isAdminEmail(user.email)){
+
+        console.log("Cuenta administradora detectada en álbum. Redirigiendo al panel:", user.email);
+
+        window.location.replace(ADMIN_PAGE);
 
         return;
 
@@ -689,7 +732,7 @@ window.deleteEvidenceByDay = async function(){
 
         alert("Debes iniciar sesión para borrar tu evidencia.");
 
-        window.location.href = "login.html";
+        window.location.href = LOGIN_PAGE;
 
         return;
 
