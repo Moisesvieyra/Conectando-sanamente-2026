@@ -43,7 +43,8 @@ import {
 
 const ADMIN_EMAILS = [
     "ksanchez@aguakan.com",
-    "echan@aguakan.com"
+    "echan@aguakan.com",
+    "bduran@aguakan.com"
 ];
 
 const TOTAL_DAYS = 21;
@@ -337,6 +338,7 @@ function getAdminDisplayName(email){
 
     if(email === "ksanchez@aguakan.com") return "Keyla Sánchez";
     if(email === "echan@aguakan.com") return "Edith Chan";
+    if(email === "bduran@aguakan.com") return "B. Durán";
 
     return getNameFromEmail(email);
 
