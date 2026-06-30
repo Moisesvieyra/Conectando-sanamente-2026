@@ -83,7 +83,7 @@ const PERMISSION_ERROR_CODES = [
        o desde una cuenta con alias de envío configurado.
 */
 
-const REJECT_EMAIL_WEB_APP_URL = "PEGA_AQUI_LA_URL_DE_TU_APPS_SCRIPT";
+const REJECT_EMAIL_WEB_APP_URL = "https://script.google.com/a/macros/aguakan.com/s/AKfycbxrAgDCmRohLW_kjekxbuTga8ocBSk1_byRTT1b8U5VNn2lTGYU53HE94IITs03dF43sA/exec";
 const REJECT_EMAIL_ENABLED = true;
 
 const REVIEW_STATUS = {
